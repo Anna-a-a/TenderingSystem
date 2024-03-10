@@ -2,7 +2,7 @@ CREATE TABLE tender_state (
 	id bigserial not null primary key,
 	description text not null
 );
-comment on table tender_state is "Tender states"
+comment on table tender_state is 'Tender states';
 comment on column tender_state.id is 'Id of state';
 comment on column tender_state.description is 'Full description of state(for example: создан ожидает заявки)';
 
@@ -13,7 +13,7 @@ CREATE TABLE tender_user (
 	login text not null,
 	password_hash text not null
 );
-comment on table tender_user is 'System users'
+comment on table tender_user is 'System users';
 comment on column tender_user.id is 'Id of user';
 comment on column tender_user.name is 'Name of user';
 comment on column tender_user.login is 'Login name of user';
@@ -24,7 +24,7 @@ CREATE TABLE supplier (
 	id bigserial not null primary key,
 	name text not null
 );
-comment on table supplier is 'Suppliers'
+comment on table supplier is 'Suppliers';
 comment on column supplier.id is 'Id of supplier';
 comment on column supplier.name is 'Supplier name or name of supplier organization';
 
@@ -38,7 +38,7 @@ CREATE TABLE tender (
 	end_date_time TIMESTAMP,
 	user_id bigint not null references tender_user
 );
-comment on table tender is 'Tenders info'
+comment on table tender is 'Tenders info';
 comment on column tender.id is 'Id of tender';
 comment on column tender.tender_status_id is 'Id of the tender state';
 comment on column tender.description is 'Tender description';
@@ -76,9 +76,12 @@ VALUES ('OOO Подрядчик1'),
 
 
 INSERT INTO tender(tender_status_id, description, start_date_time, user_id)
-VALUES (2, 'Проектирование, монтаж и обслуживание сигнализации, пожароохранных, контрольно-пропускных систем и оборудования', '2021-09-27 15:00:00', 1);
+VALUES (2, 'Проектирование, монтаж и обслуживание сигнализации, пожароохранных, контрольно-пропускных систем и оборудования', '2021-09-27 15:00:00', 1),
+       (3, 'Монтаж и обслуживание сигнализации, пожароохранных, контрольно-пропускных систем и оборудования', '2021-09-27 12:00:00', 1);
 
 
-INSERT INTO tender_supplier(tender_id, supplier_id, price)
-VALUES (1 , 1, 100000),
-       (1 , 2, 1000500);
+
+
+INSERT INTO tender_supplier(tender_id, supplier_id, price, is_winner)
+VALUES (1 , 1, 100000, 'false'),
+       (2 , 2, 1000500, 'true');
