@@ -2,6 +2,7 @@ from fastapi import FastAPI
 import psycopg2
 
 app = FastAPI()
+
 def fetch_tender_info(tender_id):
     # Database connection parameters
     conn = psycopg2.connect(
@@ -15,7 +16,7 @@ def fetch_tender_info(tender_id):
     # Create a cursor object
     cur = conn.cursor()
 
-    # SQL query to get all info about a tender with conditional logic
+    # SQL query to get all info about a tender
     query = """
     SELECT 
         t.id AS tender_id,
@@ -55,14 +56,16 @@ def fetch_tender_info(tender_id):
     WHERE t.id = %s;
     """
 
+
     # Execute the query
     cur.execute(query, (tender_id,))
 
-    # Fetch the result
-    result = cur.fetchone()
+    # Fetch all the rows
+    rows = cur.fetchall()
 
     # Close the cursor and connection
     cur.close()
     conn.close()
 
-    return result
+    return rows
+
