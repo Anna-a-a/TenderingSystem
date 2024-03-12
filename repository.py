@@ -3,7 +3,7 @@ import psycopg2
 
 app = FastAPI()
 
-def fetch_tender_info(tender_id):
+def fetch_tenders_info():
     # Database connection parameters
     conn = psycopg2.connect(
         dbname="tendering-system-db",
@@ -27,22 +27,10 @@ def fetch_tender_info(tender_id):
         ts.description AS tender_status_description,
         tu.name AS tender_user_name,
         tu.login AS tender_user_login,
-        CASE
-            WHEN ts.id IN (2, 1) THEN NULL
-            ELSE tsup.supplier_id
-        END AS supplier_id,
-        CASE
-            WHEN ts.id IN (2, 1) THEN NULL
-            ELSE s.name
-        END AS supplier_name,
-        CASE
-            WHEN ts.id IN (2, 1) THEN NULL
-            ELSE tsup.price
-        END AS supplier_price,
-        CASE
-            WHEN ts.id IN (2, 1) THEN NULL
-            ELSE tsup.is_winner
-        END AS is_winner
+        tsup.supplier_id AS supplier_id,
+        s.name AS supplier_name,
+        tsup.price AS supplier_price,
+        tsup.is_winner AS is_winner
     FROM 
         tender t
     JOIN 
@@ -53,12 +41,12 @@ def fetch_tender_info(tender_id):
         tender_supplier tsup ON t.id = tsup.tender_id AND tsup.is_winner = TRUE
     LEFT JOIN 
         supplier s ON tsup.supplier_id = s.id
-    WHERE t.id = %s;
+   
     """
 
 
     # Execute the query
-    cur.execute(query, (tender_id,))
+    cur.execute(query, )
 
     # Fetch all the rows
     rows = cur.fetchall()

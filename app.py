@@ -5,12 +5,13 @@ from repository import *
 
 app = FastAPI()
 
-@app.get("/tender/{tender_id}")
-async def get_tender_info(tender_id: int):
-    tender_info = fetch_tender_info(tender_id)
-    tender = Tender(tender_info[0][0], tender_info[0][1], tender_info[0][2], tender_info[0][3], tender_info[0][4], tender_info[0][5],
-                    tender_info[0][6], tender_info[0][7], tender_info[0][8], tender_info[0][9], tender_info[0][10], tender_info[0][11])
-    if tender_info:
-        return tender
-    else:
-        return {}
+@app.get("/tenders")
+async def get_tenders_info():
+    tender_info = fetch_tenders_info()
+    tenders = set()
+    for i in range(len(tender_info)):
+        tenders.add(Tender(tender_info[i][0], tender_info[i][1], tender_info[i][2], tender_info[i][3], tender_info[i][4],
+                           tender_info[i][5],tender_info[i][6], tender_info[i][7], tender_info[i][8], tender_info[i][9],
+                                                                tender_info[i][10], tender_info[i][11]))
+
+    return tenders
