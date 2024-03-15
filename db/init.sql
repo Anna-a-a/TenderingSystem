@@ -36,7 +36,11 @@ CREATE TABLE tender (
 	created_date_time TIMESTAMP not null default current_date,
 	start_date_time TIMESTAMP not null,
 	end_date_time TIMESTAMP,
-	user_id bigint not null references tender_user
+	user_id bigint not null references tender_user,
+	first_price bigint not null,
+	title text not null,
+	delivery_address text not null,
+	delivery_area text not null
 );
 comment on table tender is 'Tenders info';
 comment on column tender.id is 'Id of tender';
@@ -60,6 +64,10 @@ comment on column tender_supplier.supplier_id is 'id of supplier';
 comment on column tender_supplier.price is 'Price of tender';
 comment on column tender_supplier.is_winner is 'Status of supplier';
 
+CREATE TABLE tender_documents (
+	tender_id bigint not null references tender,
+	document text not null
+);
 
 INSERT INTO tender_state(description)
 VALUES ('создан'),
@@ -75,11 +83,9 @@ VALUES ('OOO Подрядчик1'),
        ('OOO Подрядчик2');
 
 
-INSERT INTO tender(tender_status_id, description, start_date_time, user_id)
-VALUES (2, 'Проектирование, монтаж и обслуживание сигнализации, пожароохранных, контрольно-пропускных систем и оборудования', '2021-09-27 15:00:00', 1),
-       (3, 'Монтаж и обслуживание сигнализации, пожароохранных, контрольно-пропускных систем и оборудования', '2021-09-27 12:00:00', 1);
-
-
+INSERT INTO tender(tender_status_id, description, start_date_time, end_date_time, user_id, first_price, title, delivery_address, delivery_area)
+VALUES (2, 'Проектирование, монтаж и обслуживание сигнализации, пожароохранных, контрольно-пропускных систем и оборудования', '2024-03-15 15:00:00','2024-03-20 15:00:00', 1, 1230, 'Проектирование', 'пгниу', 'Пермский край'),
+       (3, 'Монтаж и обслуживание сигнализации, пожароохранных, контрольно-пропускных систем и оборудования', '2021-09-27 12:00:00', '2021-10-27 12:00:00', 1, 12302002, 'Монтаж', 'пгниу', 'Пермский край');
 
 
 INSERT INTO tender_supplier(tender_id, supplier_id, price, is_winner)
