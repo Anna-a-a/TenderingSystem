@@ -15,3 +15,8 @@ async def get_tenders_info():
                            tender_info[i][10], tender_info[i][11], tender_info[i][12], tender_info[i][13], tender_info[i][14], tender_info[i][15]))
 
     return tenders
+
+
+@app.post("/form")
+async def send_tender_form(tender_status_id, description, start_date_time, end_date_time, user_id, first_price, title, delivery_address, delivery_area):
+    return insert_tender_info(tender_status_id, description, start_date_time, end_date_time, user_id, first_price, title, delivery_address, delivery_area)
