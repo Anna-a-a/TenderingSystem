@@ -33,5 +33,8 @@ default database: tendering-system-db
 
 Test data and scheme - db/init.sql
 
- 
+#-- Insert a PDF file into the database as binary data
+INSERT INTO documents (file_name, file_data)
+VALUES ('example.pdf', pg_read_binary_file('/path/to/example.pdf'));
+
 

@@ -50,7 +50,10 @@ comment on column tender.created_date_time is 'Time of creating tender';
 comment on column tender.start_date_time is 'Time of starting tender';
 comment on column tender.end_date_time is 'Time of ending tender';
 comment on column tender.user_id is 'Id of user who created the tender';
-
+comment on column tender.first_price is 'Tender first price';
+comment on column tender.title is 'Title of tender';
+comment on column tender.delivery_address is 'Address of supply';
+comment on column tender.delivery_area is 'Area of supply';
 
 CREATE TABLE tender_supplier (
 	tender_id bigint not null references tender,
@@ -65,9 +68,19 @@ comment on column tender_supplier.price is 'Price of tender';
 comment on column tender_supplier.is_winner is 'Status of supplier';
 
 CREATE TABLE tender_documents (
-	tender_id bigint not null references tender,
-	document text not null
+    id SERIAL PRIMARY KEY,
+    tender_id bigint not null references tender,
+    file_name VARCHAR(255),
+    file_data BYTEA
+
 );
+
+comment on table tender_documents is 'Tender documents';
+comment on column tender_documents.id is 'Id of document';
+comment on column tender_documents.tender_id is 'Id of tender';
+comment on column tender_documents.file_name is 'Filename of document';
+comment on column tender_documents.file_data is 'Document data';
+
 
 INSERT INTO tender_state(description)
 VALUES ('создан'),
