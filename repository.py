@@ -13,6 +13,7 @@ def fetch_tenders_info():
         port="5432"
     )
 
+
     # Create a cursor object
     cur = conn.cursor()
 
@@ -56,4 +57,46 @@ def fetch_tenders_info():
     conn.close()
 
     return rows
+
+
+def insert_tender_info(tender_status_id, description, start_date_time, user_id):
+    conn = psycopg2.connect(
+        dbname="tendering-system-db",
+        user="username",
+        password="password",
+        host="localhost",  # Or "127.0.0.1"
+        port="5432"
+    )
+
+    # Create a cursor object
+    cur = conn.cursor()
+    try:
+        # SQL query to get all info about a tender
+        query = f"""
+        INSERT INTO tender(tender_status_id, description, start_date_time, user_id)
+        VALUES({tender_status_id},
+               {description}, {start_date_time},
+               {user_id};)
+               """
+
+        # Execute the query
+        cur.execute(query, (tender_status_id, description, start_date_time, user_id))
+
+        # Close the cursor and connection
+        cur.close()
+        conn.close()
+
+        return 1
+
+    except:
+        return 0
+
+
+
+
+
+
+
+
+
 

@@ -1,8 +1,7 @@
 from models.tender import Tender
 from fastapi import FastAPI
-from fastapi.encoders import jsonable_encoder
 from repository import *
-
+from repository import insert_tender_info
 app = FastAPI()
 
 @app.get("/tenders")
@@ -15,3 +14,10 @@ async def get_tenders_info():
                                                                 tender_info[i][10], tender_info[i][11]))
 
     return tenders
+
+
+
+
+@app.post("/form")
+async def send_tender_info(tender_status_id, description, start_date_time, user_id):
+    insert_tender_info(tender_status_id, description, start_date_time, user_id)
