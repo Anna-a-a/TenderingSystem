@@ -16,13 +16,15 @@ tendering system for university project
 # Set up environment
 1. установить docker
 2. установить docker-compose
-3. docker pull postgres
+3. pyway migrate
+4. docker pull postgres
  
 
 #  Run db locally:
 1. run container with db
    docker-compose up --force-recreate --remove-orphans --build
-2. clean db 
+2. pyway migrate
+3. clean db 
    docker-compose down -v
 
 # Connect to db
