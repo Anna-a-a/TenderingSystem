@@ -24,8 +24,9 @@ tendering system for university project
 1. run container with db
    docker-compose up --force-recreate --remove-orphans --build
 2. pyway migrate
-3. clean db 
-   docker-compose down -v
+
+# Clean db 
+docker-compose down -v
 
 # Connect to db
 user: username
