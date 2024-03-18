@@ -21,7 +21,7 @@ tendering system for university project
  
 
 #  Run db locally:
-1. run container with db
+1. run container with db :
    docker-compose up --force-recreate --remove-orphans --build
 2. pyway migrate
 
