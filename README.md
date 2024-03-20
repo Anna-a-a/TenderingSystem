@@ -25,6 +25,9 @@ tendering system for university project
    docker-compose up --force-recreate --remove-orphans --build
 2. pyway migrate
 
+#start app
+uvicorn app:app --reload   
+
 # Clean db 
 docker-compose down -v
 
@@ -35,6 +38,9 @@ port: 5432
 default database: tendering-system-db
 
 Test data and scheme - db/init.sql
+
+#start app
+uvicorn app:app --reload            
 
 #-- Insert a PDF file into the database as binary data
 INSERT INTO documents (file_name, file_data)

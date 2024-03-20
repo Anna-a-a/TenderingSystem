@@ -19,7 +19,7 @@ class Tender:
         self.supplier_price = supplier_price
         self.is_winner = is_winner
 
-    def serialize(self):
+"""    def serialize(self):
         return {
             'id': self.id,
             'description': self.description,
@@ -38,3 +38,4 @@ class Tender:
             'supplier_price': self.supplier_price,
             'is_winner': self.is_winner
         }
+"""

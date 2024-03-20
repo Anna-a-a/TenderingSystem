@@ -15,3 +15,15 @@ async def get_tenders_info():
                            tender_info[i][10], tender_info[i][11], tender_info[i][12], tender_info[i][13], tender_info[i][14], tender_info[i][15]))
 
     return tenders
+
+@app.get("/tenderss")
+async def get_tenders():
+    tender_info = fetch_pending_tenders()
+    tenders = set()
+    print(tender_info[0])
+
+    for i in range(len(tender_info)):
+        for j in range(len(tender_info[0])):
+            tenders.add(tender_info[i][j])
+
+    return tenders
