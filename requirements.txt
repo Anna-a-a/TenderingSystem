@@ -1,0 +1,4 @@
+FastAPI
+uvicorn
+Tender
+psycopg2-binary

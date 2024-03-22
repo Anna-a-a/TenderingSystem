@@ -10,7 +10,6 @@ services:
       POSTGRES_DB: tendering-system-db
     volumes:
       - db:/var/lib/postgresql/data
-      - ./db:/docker-entrypoint-initdb.d
     networks:
       - app-network
 volumes:
