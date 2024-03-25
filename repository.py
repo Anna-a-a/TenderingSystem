@@ -62,7 +62,8 @@ def fetch_tenders_info():
 
     return rows
 
-def fetch_pending_tenders():
+
+def fetch_pending_tender_by_id(tender_id):
     conn = psycopg2.connect(
         dbname="tendering-system-db",
         user="username",
@@ -74,21 +75,23 @@ def fetch_pending_tenders():
     cur = conn.cursor()
     query = """
         SELECT 
-        t.id AS tender_id,
-        t.description AS tender_description,
-        t.created_date_time AS tender_created_date_time,
-        t.start_date_time AS tender_start_date_time,
-        t.end_date_time AS tender_end_date_time,
-        t.first_price AS tender_first_price,
-        t.title AS tender_title,
-        t.delivery_address AS tender_delivery_address,
-        t.delivery_area AS tender_delivery_area,
-    	ts.description AS status_description,
-    	tu.name AS user_name,
-    	array_agg(s.id) AS supplier_id,
-    	array_agg(s.name) AS supplier_name,
-    	CASE WHEN COUNT(tsup.supplier_id) > 1 THEN NULL ELSE MIN(tsup.price) END AS supplier_price,
-    	tsup.is_winner AS is_winner
+    t.id AS tender_id,
+    t.description AS tender_description,
+    t.created_date_time AS tender_created_date_time,
+    t.start_date_time AS tender_start_date_time,
+    t.end_date_time AS tender_end_date_time,
+    t.first_price AS tender_first_price,
+    t.title AS tender_title,
+    t.delivery_address AS tender_delivery_address,
+    t.delivery_area AS tender_delivery_area,
+    ts.description AS status_description,
+    tu.name AS user_name,
+    tu.login AS user_login,
+    array_agg(s.id) AS supplier_id,
+    array_agg(s.name) AS supplier_name,
+    array_agg(tsup.price) AS supplier_prices,
+    CASE WHEN COUNT(tsup.supplier_id) < 3 THEN NULL ELSE MIN(tsup.price) END AS supplier_price,
+    tsup.is_winner AS is_winner
 FROM 
     tender t
 JOIN 
@@ -100,15 +103,14 @@ LEFT JOIN
 LEFT JOIN 
     supplier s ON tsup.supplier_id = s.id
 WHERE 
-    ts.id IN (1, 2)
+    ts.id IN (1, 2) AND t.id = %s
 GROUP BY 
-    t.id, t.description, t.created_date_time, t.start_date_time, t.end_date_time, t.first_price, t.title, t.delivery_address, t.delivery_area, ts.description, tu.name, tu.login, tsup.is_winner
-
-
+    t.id, t.description, t.created_date_time, t.start_date_time, t.end_date_time, t.first_price, t.title, t.delivery_address, t.delivery_area, ts.description, tu.name, tu.login, tsup.is_winner;
     """
 
-    cur.execute(query)
+    cur.execute(query, (tender_id,))
     rows = cur.fetchall()
     cur.close()
     conn.close()
     return rows
+
