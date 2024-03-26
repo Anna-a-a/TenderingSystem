@@ -45,3 +45,15 @@ async def get_pending_tenders(tender_id: int):
         )
         tenders.append(tender.serialize())
     return tenders[0] if tenders else None # Возвращаем первый тендер или None, если список пуст
+
+@app.post("/new_tender_form")
+async def send_tender_info(tender_status_id, description, start_date_time, user_id, created_date_time, end_date_time, first_price, title, delivery_address, delivery_area):
+    return insert_tender_info(tender_status_id, description, start_date_time, user_id, created_date_time,
+                              end_date_time, first_price, title, delivery_address, delivery_area)
+
+
+
+@app.post("/supplier_form")
+async def tender_suplplier(supplier_id, price):
+    return 1
+
