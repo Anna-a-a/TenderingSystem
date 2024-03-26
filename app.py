@@ -27,3 +27,14 @@ async def get_tenders():
             tenders.add(tender_info[i][j])
 
     return tenders
+
+@app.post("/form")
+async def send_tender_info(tender_status_id, description, start_date_time, user_id, created_date_time=None, end_date_time=None, first_price=None, title=None, delivery_address=None, delivery_area=None):
+    insert_tender_info(tender_status_id, description, start_date_time, user_id, created_date_time=None, end_date_time=None, first_price=None, title=None, delivery_address=None, delivery_area=None)
+
+
+
+@app.post("/tender_supplier")
+async def tender_suplplier(supplier_id,price):
+    return 1
+
