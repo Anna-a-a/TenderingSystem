@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 import psycopg2
+from psycopg2 import sql
 from psycopg2 import OperationalError
 app = FastAPI()
 
@@ -115,7 +116,6 @@ GROUP BY
 
 
 
-
 def insert_tender_info(tender_status_id, description, start_date_time, user_id, created_date_time=None, end_date_time=None, first_price=None, title=None, delivery_address=None, delivery_area=None):
     conn = psycopg2.connect(
         dbname="tendering-system-db",
@@ -125,27 +125,18 @@ def insert_tender_info(tender_status_id, description, start_date_time, user_id, 
         port="5432"
     )
 
-    # Создание объекта курсора
-    cur = conn.cursor()
+    cursor = conn.cursor()
+    query = """
+            INSERT INTO tender(tender_status_id, description, start_date_time, user_id, created_date_time, end_date_time, first_price, title, delivery_address, delivery_area)
+            VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            """
     try:
-        # SQL-запрос для вставки нового тендера
-        query = """
-        INSERT INTO tender(tender_status_id, description, start_date_time, user_id, created_date_time, end_date_time, first_price, title, delivery_address, delivery_area)
-        VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-        """
-
-        # Выполнение запроса с параметрами
-        cur.execute(query, (tender_status_id, description, start_date_time, user_id, created_date_time, end_date_time, first_price, title, delivery_address, delivery_area))
-
-        # Подтверждение транзакции
+        cursor.execute(query, (tender_status_id, description, start_date_time, user_id, created_date_time, end_date_time, first_price, title, delivery_address, delivery_area))
         conn.commit()
-
-        # Закрытие курсора и соединения
-        cur.close()
+        return True
+    except OperationalError as e:
+        print(f"The error '{e}' occurred")
+        return False
+    finally:
+        cursor.close()
         conn.close()
-
-        return 1
-
-    except Exception as e:
-        print(f"Ошибка: {e}")
-        return 0

@@ -28,13 +28,14 @@ async def get_tenders():
 
     return tenders
 
-@app.post("/form")
-async def send_tender_info(tender_status_id, description, start_date_time, user_id, created_date_time=None, end_date_time=None, first_price=None, title=None, delivery_address=None, delivery_area=None):
-    insert_tender_info(tender_status_id, description, start_date_time, user_id, created_date_time=None, end_date_time=None, first_price=None, title=None, delivery_address=None, delivery_area=None)
+@app.post("/new_tender_form")
+async def send_tender_info(tender_status_id, description, start_date_time, user_id, created_date_time, end_date_time, first_price, title, delivery_address, delivery_area):
+    return insert_tender_info(tender_status_id, description, start_date_time, user_id, created_date_time,
+                              end_date_time, first_price, title, delivery_address, delivery_area)
 
 
 
-@app.post("/tender_supplier")
-async def tender_suplplier(supplier_id,price):
+@app.post("/supplier_form")
+async def tender_suplplier(supplier_id, price):
     return 1
 
