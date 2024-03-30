@@ -20,7 +20,7 @@ async def get_tenders_info():
 
 @app.get("/tenders_suppliers/{tender_id}")
 async def get_pending_tenders(tender_id: int):
-    rows = fetch_pending_tender_by_id(tender_id)
+    rows = fetch_pending_tender_by_id(tender_id)  # Assuming the new function is named fetch_pending_tender_by_id_new
     tenders = []
     for row in rows:
         tender_id, tender_description, tender_created_date_time, tender_start_date_time, tender_end_date_time, tender_first_price, tender_title, tender_delivery_address, tender_delivery_area, status_description, user_name, user_login, supplier_ids, supplier_names, supplier_prices, supplier_price, is_winner = row
@@ -44,16 +44,17 @@ async def get_pending_tenders(tender_id: int):
             is_winner=is_winner
         )
         tenders.append(tender.serialize())
-    return tenders[0] if tenders else None # Возвращаем первый тендер или None, если список пуст
+    return tenders[0] if tenders else None  # Возвращаем первый тендер или None, если список пуст
+
 
 @app.post("/new_tender_form")
-async def send_tender_info(tender_status_id, description, start_date_time, user_id, created_date_time, end_date_time, first_price, title, delivery_address, delivery_area):
-    return insert_tender_info(tender_status_id, description, start_date_time, user_id, created_date_time,
+async def send_tender_info(tender_status, description, start_date_time, user_id, created_date_time, end_date_time, first_price, title, delivery_address, delivery_area):
+    return insert_tender_info(tender_status, description, start_date_time, user_id, created_date_time,
                               end_date_time, first_price, title, delivery_address, delivery_area)
 
 
 
-@app.post("/supplier_form")
+@app.post("/tender_supplier")
 async def tender_suplplier(supplier_id, price):
-    return 1
+    return send_tender_suplplier_info(supplier_id, price)
 
