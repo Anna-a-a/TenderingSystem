@@ -127,11 +127,16 @@ def insert_tender_info(tender_status, description, start_date_time, user_id, cre
             first_price, title, delivery_address, delivery_area)
 VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
             """
-    cursor.execute(query, (tender_status, description, start_date_time, user_id, created_date_time, end_date_time,
-                               first_price, title, delivery_address, delivery_area))
-    conn.commit()
-    cursor.close()
-    conn.close()
+    try:
+        cursor.execute(query, (tender_status, description, start_date_time, user_id, created_date_time, end_date_time, first_price, title, delivery_address, delivery_area))
+        conn.commit()
+        return True
+    except OperationalError as e:
+        print(f"The error '{e}' occurred")
+        return False
+    finally:
+        cursor.close()
+        conn.close()
 
 
 def send_tender_suplplier_info(supplier_id, price):
