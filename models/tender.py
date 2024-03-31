@@ -1,6 +1,6 @@
 class Tender:
     def __init__(self, id, description, created_data_time, start_data_time, end_data_time, first_price, title,
-                 delivery_address, delivery_area, status_description,
+                 delivery_address, delivery_area, status,
                  user_name, user_login, supplier_id, supplier_name, supplier_price, is_winner, ):
         self.id = id
         self.description = description
@@ -11,7 +11,7 @@ class Tender:
         self.title = title
         self.delivery_address = delivery_address
         self.delivery_area = delivery_area
-        self.status_description = status_description
+        self.status = status
         self.user_name = user_name
         self.user_login = user_login
         self.supplier_id = supplier_id
@@ -30,7 +30,7 @@ class Tender:
             'title': self.title,
             'delivery_address': self.delivery_address,
             'delivery_area': self.delivery_area,
-            'status_description': self.status_description,
+            'status': self.status,
             'user_name': self.user_name,
             'user_login': self.user_login,
             'supplier_id': self.supplier_id,

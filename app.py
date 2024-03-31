@@ -48,7 +48,8 @@ async def get_pending_tenders(tender_id: int):
 
 
 @app.post("/new_tender_form")
-async def send_tender_info(tender_status, description, start_date_time, user_id, created_date_time, end_date_time, first_price, title, delivery_address, delivery_area):
+async def send_tender_info(tender_status, description, start_date_time, user_id, created_date_time, end_date_time,
+                           first_price, title, delivery_address, delivery_area):
     return insert_tender_info(tender_status, description, start_date_time, user_id, created_date_time,
                               end_date_time, first_price, title, delivery_address, delivery_area)
 
