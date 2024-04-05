@@ -1,3 +1,5 @@
+from pydantic import BaseModel, validator
+from datetime import date
 class Tender:
     def __init__(self, id, description, created_data_time, start_data_time, end_data_time, first_price, title,
                  delivery_address, delivery_area, status,
@@ -38,3 +40,29 @@ class Tender:
             'supplier_price': self.supplier_price,
             'is_winner': self.is_winner
         }
+
+
+from pydantic import BaseModel, validator
+from datetime import datetime
+
+class Post_tender(BaseModel):
+    tender_status: str
+    description: str
+    start_date_time: datetime
+    user_id: int
+    created_date_time: datetime
+    end_date_time: datetime
+    first_price: str
+    title: str
+    delivery_address: str
+    delivery_area: str
+
+    @validator("start_date_time", "created_date_time", "end_date_time", pre=True)
+    def validate_datetime(cls, v):
+        try:
+            return datetime.strptime(v, "%Y-%m-%d %H:%M:%S")
+        except ValueError:
+            raise ValueError("Incorrect data format, should be YYYY-MM-DD HH:MM:SS")
+
+
+

@@ -3,6 +3,12 @@ from models.tender_suppliers import Tender_suppliers
 from fastapi import FastAPI
 from fastapi.encoders import jsonable_encoder
 from repository import *
+from pydantic import BaseModel
+from models.tender import Post_tender
+import psycopg2
+from psycopg2 import sql
+from psycopg2 import OperationalError
+
 
 app = FastAPI()
 
@@ -47,15 +53,43 @@ async def get_pending_tenders(tender_id: int):
     return tenders[0] if tenders else None  # Возвращаем первый тендер или None, если список пуст
 
 
-@app.post("/new_tender_form")
-async def send_tender_info(tender_status, description, start_date_time, user_id, created_date_time, end_date_time,
-                           first_price, title, delivery_address, delivery_area):
-    return insert_tender_info(tender_status, description, start_date_time, user_id, created_date_time,
-                              end_date_time, first_price, title, delivery_address, delivery_area)
+from datetime import datetime
+import psycopg2
+from pydantic import BaseModel
+
+@app.post("/send_tender_info")
+def insert_tender_info(item: Post_tender):
+    conn = psycopg2.connect(
+        dbname="tendering-system-db",
+        user="username",
+        password="password",
+        host="localhost",
+        port="5432"
+    )
+    cursor = conn.cursor()
+    query = """
+            INSERT INTO tender(tender_status, description, start_date_time, user_id, created_date_time, end_date_time, 
+            first_price, title, delivery_address, delivery_area)
+VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
+            """
+    try:
+        cursor.execute(query, (item.tender_status, item.description, item.start_date_time, item.user_id, item.created_date_time, item.end_date_time, item.first_price, item.title, item.delivery_address, item.delivery_area))
+        conn.commit()
+        return True
+    except psycopg2.OperationalError as e:
+        print(f"The error '{e}' occurred")
+        return False
+    finally:
+        cursor.close()
+        conn.close()
+
+
 
 
 
 @app.post("/tender_supplier")
 async def tender_suplplier(supplier_id, price):
     return send_tender_suplplier_info(supplier_id, price)
+
+
 
