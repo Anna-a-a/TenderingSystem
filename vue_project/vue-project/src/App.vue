@@ -55,7 +55,8 @@ export default {
         <a class="navbar-brand" href="#">BrandName</a>
         <form class="form-inline my-2 my-lg-0 d-flex justify-content-between w-100">
             <input class="form-control flex-grow-1" type="search" placeholder="Поиск" aria-label="Search">
-            <button class="btn btn-outline-success my-2 my-sm-0" type="submit" style="margin-left: 10px;">Искать <i class="fa-solid fa-magnifying-glass"></i></button>
+            <button class="btn btn-outline-success my-2 my-sm-0 mr-3" type="submit" style="margin-left: 10px;">Искать <i class="fa-solid fa-magnifying-glass"></i></button>
+            <router-link to="/create" class="btn btn-primary ml-auto custom-btn" role="button">+</router-link>
         </form>
         <div class="px-3">
             <button class="round"><i class="fa-solid fa-user"></i></button>

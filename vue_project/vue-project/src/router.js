@@ -5,7 +5,6 @@ import application2 from "./components/application2.vue";
 import authorization from "./components/authorization.vue";
 import registration from "./components/registration.vue";
 
-
 export default createRouter({
     history: createWebHistory(),
     routes: [
@@ -16,3 +15,7 @@ export default createRouter({
         { path: '/regist', component: registration}
     ]
 })
+
+
+
+
