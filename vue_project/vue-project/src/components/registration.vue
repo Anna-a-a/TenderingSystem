@@ -20,7 +20,7 @@
                         <input type="password" class="form-control" id="thepassword1" placeholder="Введите пароль"> 
                     </div>
                     <div class="mb-3">
-                        <label for="thepassword2" class="form-label">Пдтвердите пароль</label>
+                        <label for="thepassword2" class="form-label">Подтвердите пароль</label>
                         <input type="password" class="form-control" id="thepassword2" placeholder="Повторите пароль"> 
                     </div>
                     <button type="submit" class="btn btn-primary">Зарегестрироваться</button>

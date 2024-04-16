@@ -53,10 +53,6 @@ async def get_pending_tenders(tender_id: int):
     return tenders[0] if tenders else None  # Возвращаем первый тендер или None, если список пуст
 
 
-from datetime import datetime
-import psycopg2
-from pydantic import BaseModel
-
 @app.post("/send_tender_info")
 def insert_tender_info(item: Post_tender):
     conn = psycopg2.connect(
@@ -82,9 +78,6 @@ VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
     finally:
         cursor.close()
         conn.close()
-
-
-
 
 
 @app.post("/tender_supplier")
