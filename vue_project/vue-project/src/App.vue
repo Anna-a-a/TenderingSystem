@@ -59,7 +59,11 @@ export default {
             <router-link to="/create" class="btn btn-primary ml-auto custom-btn" role="button">+</router-link>
         </form>
         <div class="px-3">
-            <button class="round"><i class="fa-solid fa-user"></i></button>
+            <a href="your-page.html" class="button-link">
+                <button class="round" title="Перейти на страницу пользователя">
+                    <i class="fa-solid fa-user"></i>
+                </button>
+            </a>
         </div>
     </div>
 </nav>
