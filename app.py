@@ -1,16 +1,16 @@
+import uuid
+from fastapi import FastAPI, Response, HTTPException
 from models.tender import Tender
 from models.tender_suppliers import Tender_suppliers
-from fastapi import FastAPI
-from fastapi.encoders import jsonable_encoder
 from repository import *
-from pydantic import BaseModel
 from models.tender import Post_tender
+from models.user import Post_user, Check_user
 import psycopg2
-from psycopg2 import sql
-from psycopg2 import OperationalError
+from password_hasher import *
 
 
 app = FastAPI()
+
 
 @app.get("/tenders")
 async def get_tenders_info():
@@ -53,10 +53,6 @@ async def get_pending_tenders(tender_id: int):
     return tenders[0] if tenders else None  # Возвращаем первый тендер или None, если список пуст
 
 
-from datetime import datetime
-import psycopg2
-from pydantic import BaseModel
-
 @app.post("/send_tender_info")
 def insert_tender_info(item: Post_tender):
     conn = psycopg2.connect(
@@ -84,11 +80,76 @@ VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
         conn.close()
 
 
+@app.post("/check_user_info")
+def check_user_info(item: Check_user, response: Response):
+    conn = psycopg2.connect(
+        dbname="tendering-system-db",
+        user="username",
+        password="password",
+        host="localhost",
+        port="5432"
+    )
+    cursor = conn.cursor()
 
+    # Define the select query
+    query = """
+            SELECT * FROM tender_system_user WHERE login=%s;
+            """
+    try:
+        cursor.execute(query, (item.login,))
+        result = cursor.fetchone()
+        if result:
+            # Check if the password matches the hashed password
+            if check_password(item.password, result[3]):
+                return True
+            else:
+                raise HTTPException(status_code=401, detail="Invalid password")
+        else:
+            raise HTTPException(status_code=404, detail="User not found")
+    except psycopg2.OperationalError as e:
+        print(f"The error '{e}' occurred")
+        raise HTTPException(status_code=500, detail="Internal server error")
+    finally:
+        cursor.close()
+        conn.close()
+
+
+@app.post("/send_user_info")
+def insert_tender_info(item: Post_user):
+    # Hash the password
+    hashed_password = hash_password(item.password)
+
+    # Connect to the database
+    conn = psycopg2.connect(
+        dbname="tendering-system-db",
+        user="username",
+        password="password",
+        host="localhost",
+        port="5432"
+    )
+    cursor = conn.cursor()
+
+    # Define the insert query
+    query = """
+            INSERT INTO tender_system_user(name, login, user_type, password_hash, email)
+            VALUES(%s, %s, %s, %s, %s);
+            """
+
+    # Execute the insert query with the hashed password
+    try:
+        cursor.execute(query, (item.name, item.login, item.user_type, hashed_password, item.email))
+        conn.commit()
+        return True
+    except psycopg2.OperationalError as e:
+        print(f"The error '{e}' occurred")
+        return False
+    finally:
+        cursor.close()
+        conn.close()
 
 
 @app.post("/tender_supplier")
-async def tender_suplplier(supplier_id, price):
+async def tender_supplier(supplier_id, price):
     return send_tender_suplplier_info(supplier_id, price)
 
 
