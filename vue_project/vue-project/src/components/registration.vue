@@ -5,9 +5,7 @@
                 <form>
                     <div class="mb-3">
                         <label for="surname" class="form-label">ФИО</label>
-                        <input type="text" class="form-control" id="surname" placeholder="Введите Вашу фамилию">
-                        <input type="text" class="form-control" id="name" placeholder="Введите Ваше Имя">
-                        <input type="text" class="form-control" id="fraternal name" placeholder="Введите Ваше Отчество">
+                        <input type="text" class="form-control" id="surname" placeholder="Введите Ваши ФИО">
                     </div>
                     <div class="mb-3">
                         <label for="mail" class="form-label">Почта</label>
@@ -25,7 +23,7 @@
                         <label for="thepassword2" class="form-label">Пдтвердите пароль</label>
                         <input type="password" class="form-control" id="thepassword2" placeholder="Повторите пароль"> 
                     </div>
-                    <button type="submit" class="btn btn-primary">Войти</button>
+                    <button type="submit" class="btn btn-primary">Зарегестрироваться</button>
                 </form>
             </div>
         </div>

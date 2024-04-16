@@ -1,6 +1,7 @@
 <template>
     <div class="container">
-        <div class="row justify-content-center">
+        <div class="row justify-content">
+            <button type="button" class="btn btn-primary">К Регистрации</button>
             <div class="col-md-12 custom-form">
                 <form>
                     <div class="mb-3">
