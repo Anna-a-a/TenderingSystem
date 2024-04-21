@@ -2,7 +2,10 @@ from fastapi import FastAPI
 import psycopg2
 from psycopg2 import sql
 from psycopg2 import OperationalError
+from password_hasher import *
+from fastapi import FastAPI, Response, HTTPException
 app = FastAPI()
+
 
 def fetch_tenders_info():
     # Database connection parameters
@@ -111,7 +114,27 @@ GROUP BY
     return rows
 
 
+def is_user_exist(user):
+    conn = psycopg2.connect(
+        dbname="tendering-system-db",
+        user="username",
+        password="password",
+        host="localhost",
+        port="5432"
+    )
+    cursor = conn.cursor()
 
+    # Define the select query
+    query = """SELECT password_hash FROM tender_system_user WHERE login=%s and password_hash=%s"""
+    try:
+        cursor.execute(query, (user.login, hash_password(user.password),))
+        result = cursor.fetchone()
+        if result is not None:
+            return result[0]
+        return False
+    finally:
+        cursor.close()
+        conn.close()
 
 
 def send_tender_suplplier_info(supplier_id, price):
@@ -147,3 +170,33 @@ def send_tender_suplplier_info(supplier_id, price):
     except Exception as e:
         print(f"Ошибка: {e}")
         return 0
+
+
+def add_user(user, hashed_password) :
+    # Connect to the database
+    conn = psycopg2.connect(
+        dbname="tendering-system-db",
+        user="username",
+        password="password",
+        host="localhost",
+        port="5432"
+    )
+    cursor = conn.cursor()
+
+    # Define the insert query
+    query = """
+                INSERT INTO tender_system_user(name, login, user_type, password_hash, email)
+                VALUES(%s, %s, %s, %s, %s);
+                """
+
+    # Execute the insert query with the hashed password
+    try:
+        cursor.execute(query, (user.name, user.login, user.user_type, hashed_password, user.email))
+        conn.commit()
+        return True
+    except psycopg2.OperationalError as e:
+        print(f"The error '{e}' occurred")
+        return False
+    finally:
+        cursor.close()
+        conn.close()

@@ -1,10 +1,10 @@
 import uuid
-from fastapi import FastAPI, Response, HTTPException
+from fastapi import FastAPI, Response, HTTPException, Request, Cookie
 from models.tender import Tender
 from models.tender_suppliers import Tender_suppliers
 from repository import *
 from models.tender import Post_tender
-from models.user import Post_user, Check_user
+from models.user import Reg_user, Check_user
 import psycopg2
 from password_hasher import *
 
@@ -13,7 +13,10 @@ app = FastAPI()
 
 
 @app.get("/tenders")
-async def get_tenders_info():
+async def get_tenders_info(request: Request):
+    auth_cookie = request.cookies.get('auth')
+
+    # для каждой апи достаем куку и проеряем что session_user таблице содержится запись о сессии
     tender_info = fetch_tenders_info()
     tenders = set()
     for i in range(len(tender_info)):
@@ -80,77 +83,33 @@ VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
         conn.close()
 
 
-@app.post("/check_user_info")
-def check_user_info(item: Check_user, response: Response):
-    conn = psycopg2.connect(
-        dbname="tendering-system-db",
-        user="username",
-        password="password",
-        host="localhost",
-        port="5432"
-    )
-    cursor = conn.cursor()
-
-    # Define the select query
-    query = """
-            SELECT * FROM tender_system_user WHERE login=%s;
-            """
-    try:
-        cursor.execute(query, (item.login,))
-        result = cursor.fetchone()
-        if result:
-            # Check if the password matches the hashed password
-            if check_password(item.password, result[3]):
-                return True
-            else:
-                raise HTTPException(status_code=401, detail="Invalid password")
-        else:
-            raise HTTPException(status_code=404, detail="User not found")
-    except psycopg2.OperationalError as e:
-        print(f"The error '{e}' occurred")
-        raise HTTPException(status_code=500, detail="Internal server error")
-    finally:
-        cursor.close()
-        conn.close()
+@app.post("/login")
+async def login(item: Check_user, response: Response):
+    hash = is_user_exist(item)
+    if hash is not None:
+        # Установка куки
+        #тут надо создать запись в session_user таблице
+        response.set_cookie(key="auth", value=hash)
+        return {"message": "Успешная авторизация"}
+    else:
+        return {"message": "Пользователь не найден"}
 
 
-@app.post("/send_user_info")
-def insert_tender_info(item: Post_user):
+@app.post("/registration")
+def registration(item: Reg_user):
     # Hash the password
     hashed_password = hash_password(item.password)
 
-    # Connect to the database
-    conn = psycopg2.connect(
-        dbname="tendering-system-db",
-        user="username",
-        password="password",
-        host="localhost",
-        port="5432"
-    )
-    cursor = conn.cursor()
-
-    # Define the insert query
-    query = """
-            INSERT INTO tender_system_user(name, login, user_type, password_hash, email)
-            VALUES(%s, %s, %s, %s, %s);
-            """
-
-    # Execute the insert query with the hashed password
-    try:
-        cursor.execute(query, (item.name, item.login, item.user_type, hashed_password, item.email))
-        conn.commit()
-        return True
-    except psycopg2.OperationalError as e:
-        print(f"The error '{e}' occurred")
-        return False
-    finally:
-        cursor.close()
-        conn.close()
+    add_user(item, hashed_password)
 
 
 @app.post("/tender_supplier")
 async def tender_supplier(supplier_id, price):
     return send_tender_suplplier_info(supplier_id, price)
 
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8001)
 
 

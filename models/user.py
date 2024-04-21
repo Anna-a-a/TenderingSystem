@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 
 
-class Post_user(BaseModel):
+class Reg_user(BaseModel):
     name: str
     login: str
     user_type: str = 'supplier'
