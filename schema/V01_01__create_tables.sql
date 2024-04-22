@@ -70,3 +70,9 @@ COMMENT ON COLUMN tender_documents.id IS 'Id of document';
 COMMENT ON COLUMN tender_documents.tender_id IS 'Id of tender';
 COMMENT ON COLUMN tender_documents.file_name IS 'Filename of document';
 COMMENT ON COLUMN tender_documents.file_hash IS 'Document hash';
+
+
+CREATE TABLE cookies (
+    user_id bigint not null references tender_system_user,
+    cookie text
+);

@@ -15,8 +15,8 @@ app = FastAPI()
 @app.get("/tenders")
 async def get_tenders_info(request: Request):
     auth_cookie = request.cookies.get('auth')
-
-    # для каждой апи достаем куку и проеряем что session_user таблице содержится запись о сессии
+    if not is_cookie_exist(auth_cookie):
+        raise HTTPException(status_code=404, detail="you are not authorized :(")
     tender_info = fetch_tenders_info()
     tenders = set()
     for i in range(len(tender_info)):
@@ -28,8 +28,12 @@ async def get_tenders_info(request: Request):
 
 
 @app.get("/tenders_suppliers/{tender_id}")
-async def get_pending_tenders(tender_id: int):
-    rows = fetch_pending_tender_by_id(tender_id)  # Assuming the new function is named fetch_pending_tender_by_id_new
+async def get_pending_tenders(tender_id: int, request: Request):
+    auth_cookie = request.cookies.get('auth')
+    if not is_cookie_exist(auth_cookie):
+        raise HTTPException(status_code=404, detail="you are not authorized :(")
+    rows = fetch_pending_tender_by_id(tender_id)
+    # Assuming the new function is named fetch_pending_tender_by_id_new
     tenders = []
     for row in rows:
         tender_id, tender_description, tender_created_date_time, tender_start_date_time, tender_end_date_time, tender_first_price, tender_title, tender_delivery_address, tender_delivery_area, status_description, user_name, user_login, supplier_ids, supplier_names, supplier_prices, supplier_price, is_winner = row
@@ -53,6 +57,7 @@ async def get_pending_tenders(tender_id: int):
             is_winner=is_winner
         )
         tenders.append(tender.serialize())
+
     return tenders[0] if tenders else None  # Возвращаем первый тендер или None, если список пуст
 
 
@@ -87,9 +92,9 @@ VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
 async def login(item: Check_user, response: Response):
     hash = is_user_exist(item)
     if hash is not None:
-        # Установка куки
-        #тут надо создать запись в session_user таблице
         response.set_cookie(key="auth", value=hash)
+        user_id = user_id_by_login(item.login, hash)
+        insert_cookie(user_id, hash)
         return {"message": "Успешная авторизация"}
     else:
         return {"message": "Пользователь не найден"}
@@ -97,9 +102,7 @@ async def login(item: Check_user, response: Response):
 
 @app.post("/registration")
 def registration(item: Reg_user):
-    # Hash the password
     hashed_password = hash_password(item.password)
-
     add_user(item, hashed_password)
 
 
