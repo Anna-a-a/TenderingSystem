@@ -59,7 +59,7 @@ export default {
             <router-link to="/create" class="btn btn-primary ml-auto custom-btn" role="button">+</router-link>
         </form>
         <div class="px-3">
-            <router-link to="/regist" class="btn btn-primary ml-auto custom-btn round" role="button" tag="button">
+            <router-link to="/auth" class="btn btn-primary ml-auto custom-btn round" role="button" tag="button">
                 <i class="fa-solid fa-user"></i>
             </router-link>
         </div>
