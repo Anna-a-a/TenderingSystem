@@ -49,8 +49,24 @@ export default {
 }
 </script>
 
-
 <template>
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container">
+        <a class="navbar-brand" href="#">BrandName</a>
+        <form class="form-inline my-2 my-lg-0 d-flex justify-content-between w-100">
+            <input class="form-control flex-grow-1" type="search" placeholder="Поиск" aria-label="Search">
+            <button class="btn btn-outline-success my-2 my-sm-0" type="submit" style="margin-left: 10px;">Искать <i class="fa-solid fa-magnifying-glass"></i></button>
+        </form>
+        <div class="px-3">
+            <button class="round"><i class="fa-solid fa-user"></i></button>
+        </div>
+    </div>
+</nav>
+  <router-view></router-view>
+  <!-- <router-view></router-view> -->
+</template>
+
+<!-- <template>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container">
         <a class="navbar-brand" href="#">BrandName</a>
@@ -102,7 +118,7 @@ export default {
   
 
 </div>
-</template>
+</template> -->
 
 <style scoped>
 

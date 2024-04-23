@@ -59,8 +59,8 @@ async def get_pending_tenders(tender_id: int, request: Request):
         tenders.append(tender.serialize())
 
     return tenders[0] if tenders else None  # Возвращаем первый тендер или None, если список пуст
-
-
+   
+    
 @app.post("/send_tender_info")
 def insert_tender_info(item: Post_tender):
     conn = psycopg2.connect(
@@ -88,6 +88,7 @@ VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
         conn.close()
 
 
+
 @app.post("/login")
 async def login(item: Check_user, response: Response):
     hash = is_user_exist(item)
@@ -104,7 +105,6 @@ async def login(item: Check_user, response: Response):
 def registration(item: Reg_user):
     hashed_password = hash_password(item.password)
     add_user(item, hashed_password)
-
 
 @app.post("/tender_supplier")
 async def tender_supplier(supplier_id, price):

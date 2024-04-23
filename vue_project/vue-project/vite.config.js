@@ -1,0 +1,50 @@
+import { fileURLToPath, URL } from 'node:url'
+
+import { defineConfig } from 'vite'
+import vue from '@vitejs/plugin-vue'
+
+// https://vitejs.dev/config/
+export default defineConfig({
+  plugins: [
+    vue(),
+  ],
+  resolve: {
+    alias: {
+      '@': fileURLToPath(new URL('./src', import.meta.url))
+    }
+  },
+  server:{
+    proxy: {
+       "^/tenders": {
+         "target": "http://127.0.0.1:8000",
+         "ws": true,
+         "changeOrigin": true
+       },
+       "^/admin": {
+         "target": "http://127.0.0.1:8000",
+         "ws": true,
+         "changeOrigin": true
+       },
+       "^/media": {
+         "target": "http://127.0.0.1:8000",
+         "ws": true,
+         "changeOrigin": true
+       },
+       "^/send_tender_info": {
+        "target": "http://127.0.0.1:8000",
+        "ws": true,
+        "changeOrigin": true
+      },
+      "^/tenders_suppliers/{tender_id}": {
+        "target": "http://127.0.0.1:8000",
+        "ws": true,
+        "changeOrigin": true
+      },
+      "^/supplier_form": {
+        "target": "http://127.0.0.1:8000",
+        "ws": true,
+        "changeOrigin": true
+      },
+         }
+     }
+})
