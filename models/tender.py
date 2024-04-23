@@ -1,5 +1,7 @@
 from pydantic import BaseModel, validator
 from datetime import date
+from pydantic import BaseModel, validator
+from datetime import datetime
 class Tender:
     def __init__(self, id, description, created_data_time, start_data_time, end_data_time, first_price, title,
                  delivery_address, delivery_area, status,
@@ -40,10 +42,6 @@ class Tender:
             'supplier_price': self.supplier_price,
             'is_winner': self.is_winner
         }
-
-
-from pydantic import BaseModel, validator
-from datetime import datetime
 
 class Post_tender(BaseModel):
     tender_status: str

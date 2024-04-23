@@ -1,19 +1,22 @@
+import uuid
+from fastapi import FastAPI, Response, HTTPException, Request, Cookie
 from models.tender import Tender
 from models.tender_suppliers import Tender_suppliers
-from fastapi import FastAPI
-from fastapi.encoders import jsonable_encoder
 from repository import *
-from pydantic import BaseModel
 from models.tender import Post_tender
+from models.user import Reg_user, Check_user
 import psycopg2
-from psycopg2 import sql
-from psycopg2 import OperationalError
+from password_hasher import *
 
 
 app = FastAPI()
 
+
 @app.get("/tenders")
-async def get_tenders_info():
+async def get_tenders_info(request: Request):
+    auth_cookie = request.cookies.get('auth')
+    if not is_cookie_exist(auth_cookie):
+        raise HTTPException(status_code=404, detail="you are not authorized :(")
     tender_info = fetch_tenders_info()
     tenders = set()
     for i in range(len(tender_info)):
@@ -25,8 +28,12 @@ async def get_tenders_info():
 
 
 @app.get("/tenders_suppliers/{tender_id}")
-async def get_pending_tenders(tender_id: int):
-    rows = fetch_pending_tender_by_id(tender_id)  # Assuming the new function is named fetch_pending_tender_by_id_new
+async def get_pending_tenders(tender_id: int, request: Request):
+    auth_cookie = request.cookies.get('auth')
+    if not is_cookie_exist(auth_cookie):
+        raise HTTPException(status_code=404, detail="you are not authorized :(")
+    rows = fetch_pending_tender_by_id(tender_id)
+    # Assuming the new function is named fetch_pending_tender_by_id_new
     tenders = []
     for row in rows:
         tender_id, tender_description, tender_created_date_time, tender_start_date_time, tender_end_date_time, tender_first_price, tender_title, tender_delivery_address, tender_delivery_area, status_description, user_name, user_login, supplier_ids, supplier_names, supplier_prices, supplier_price, is_winner = row
@@ -50,9 +57,10 @@ async def get_pending_tenders(tender_id: int):
             is_winner=is_winner
         )
         tenders.append(tender.serialize())
+
     return tenders[0] if tenders else None  # Возвращаем первый тендер или None, если список пуст
-
-
+   
+    
 @app.post("/send_tender_info")
 def insert_tender_info(item: Post_tender):
     conn = psycopg2.connect(
@@ -80,9 +88,31 @@ VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
         conn.close()
 
 
+
+@app.post("/login")
+async def login(item: Check_user, response: Response):
+    hash = is_user_exist(item)
+    if hash is not None:
+        response.set_cookie(key="auth", value=hash)
+        user_id = user_id_by_login(item.login, hash)
+        insert_cookie(user_id, hash)
+        return {"message": "Успешная авторизация"}
+    else:
+        return {"message": "Пользователь не найден"}
+
+
+@app.post("/registration")
+def registration(item: Reg_user):
+    hashed_password = hash_password(item.password)
+    add_user(item, hashed_password)
+
 @app.post("/tender_supplier")
-async def tender_suplplier(supplier_id, price):
+async def tender_supplier(supplier_id, price):
     return send_tender_suplplier_info(supplier_id, price)
 
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8001)
 
 
