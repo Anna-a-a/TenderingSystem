@@ -59,8 +59,8 @@ async def get_pending_tenders(tender_id: int, request: Request):
         tenders.append(tender.serialize())
 
     return tenders[0] if tenders else None  # Возвращаем первый тендер или None, если список пуст
-
-
+   
+    
 @app.post("/send_tender_info")
 def insert_tender_info(item: Post_tender):
     conn = psycopg2.connect(
