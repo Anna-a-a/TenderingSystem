@@ -1,10 +1,11 @@
 import uuid
 from fastapi import FastAPI, Response, HTTPException, Request, Cookie
 from models.tender import Tender
+from models.tender_info import TenderInfo
 from models.tender_suppliers import Tender_suppliers
 from repository import *
 from models.tender import Post_tender
-from models.user import Reg_user, Check_user
+from models.user import Reg_user, Check_user, Info_user
 import psycopg2
 from password_hasher import *
 
@@ -59,8 +60,8 @@ async def get_pending_tenders(tender_id: int, request: Request):
         tenders.append(tender.serialize())
 
     return tenders[0] if tenders else None  # Возвращаем первый тендер или None, если список пуст
-   
-    
+
+
 @app.post("/send_tender_info")
 def insert_tender_info(item: Post_tender):
     conn = psycopg2.connect(
@@ -108,7 +109,19 @@ def registration(item: Reg_user):
 
 @app.post("/tender_supplier")
 async def tender_supplier(supplier_id, price):
-    return send_tender_suplplier_info(supplier_id, price)
+    return send_tender_supplier_info(supplier_id, price)
+
+
+@app.get("/user_info")
+async def user_info(request: Request):
+    auth_cookie = request.cookies.get('auth')
+    if not is_cookie_exist(auth_cookie):
+        raise HTTPException(status_code=404, detail="you are not authorized :(")
+
+    user_data = user_data_by_cookie(auth_cookie)
+    # Correctly initialize the Info_user model with keyword arguments
+    user = Info_user(name=user_data[1], login=user_data[2], email=user_data[5])
+    return user
 
 
 if __name__ == "__main__":

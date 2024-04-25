@@ -137,7 +137,7 @@ def is_user_exist(user):
         conn.close()
 
 
-def send_tender_suplplier_info(supplier_id, price):
+def send_tender_supplier_info(supplier_id, price):
     conn = psycopg2.connect(
         dbname="tendering-system-db",
         user="username",
@@ -297,6 +297,52 @@ def is_cookie_exist(cookie):
         result = cursor.fetchone()
         if result is not None:
             return True
+        return False
+    finally:
+        cursor.close()
+        conn.close()
+
+def user_id_by_cookie(auth_cookie):
+    conn = psycopg2.connect(
+        dbname="tendering-system-db",
+        user="username",
+        password="password",
+        host="localhost",
+        port="5432"
+    )
+    cursor = conn.cursor()
+
+    # Define the select query
+    query = """SELECT user_id FROM cookies WHERE cookie=%s"""
+    try:
+        cursor.execute(query, (auth_cookie,))
+        result = cursor.fetchone()
+        if result is not None:
+            return result[0]
+        return False
+    finally:
+        cursor.close()
+        conn.close()
+
+
+def user_data_by_cookie(auth_cookie):
+    id = user_id_by_cookie(auth_cookie)
+    conn = psycopg2.connect(
+        dbname="tendering-system-db",
+        user="username",
+        password="password",
+        host="localhost",
+        port="5432"
+    )
+    cursor = conn.cursor()
+
+    # Define the select query
+    query = """SELECT * FROM tender_system_user WHERE id=%s"""
+    try:
+        cursor.execute(query, (id,))
+        result = cursor.fetchone()
+        if result is not None:
+            return result
         return False
     finally:
         cursor.close()

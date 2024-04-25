@@ -1,4 +1,7 @@
-FastAPI
+FastAPI~=0.92.0
 uvicorn
 Tender
 psycopg2-binary
+
+pydantic~=1.10.5
+SQLAlchemy~=2.0.23
