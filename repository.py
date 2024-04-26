@@ -5,6 +5,7 @@ from psycopg2 import OperationalError
 from password_hasher import *
 from fastapi import FastAPI, Response, HTTPException
 app = FastAPI()
+import json
 
 
 def fetch_tenders_info():
@@ -379,3 +380,17 @@ def end_tender(name):
     conn.close()
 
     return "Tender ended successfully"
+
+
+from fastapi.encoders import jsonable_encoder
+
+
+def search_in_json_list(json_list, search_string):
+    # Assuming json_list is a list of Tender objects or similar
+    # Convert each Tender object to a JSON-compatible format
+    data = [jsonable_encoder(item) for item in json_list]
+
+    # Now you can safely perform operations on data as if it were a list of dictionaries
+    results = [item for item in data if any(search_string in str(value) for value in item.values())]
+
+    return results
