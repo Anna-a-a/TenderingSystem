@@ -124,6 +124,14 @@ async def user_info(request: Request):
     return user
 
 
+@app.post("/tender_winner")
+def tender_winner(name, request: Request):
+    auth_cookie = request.cookies.get('auth')
+    if not is_cookie_exist(auth_cookie):
+        raise HTTPException(status_code=404, detail="you are not authorized :(")
+    return end_tender(name)
+
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8001)

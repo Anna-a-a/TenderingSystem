@@ -302,6 +302,7 @@ def is_cookie_exist(cookie):
         cursor.close()
         conn.close()
 
+
 def user_id_by_cookie(auth_cookie):
     conn = psycopg2.connect(
         dbname="tendering-system-db",
@@ -347,3 +348,34 @@ def user_data_by_cookie(auth_cookie):
     finally:
         cursor.close()
         conn.close()
+
+
+def end_tender(name):
+    conn = psycopg2.connect(
+        dbname="tendering-system-db",
+        user="username",
+        password="password",
+        host="localhost",
+        port="5432"
+    )
+    cursor = conn.cursor()
+
+    # SQL query to update the tender table
+    update_query = """
+    UPDATE tender
+    SET end_date_time = NOW(),
+        user_id = (SELECT id FROM tender_system_user WHERE name = %s),
+        first_price = (SELECT price FROM tender_supplier WHERE supplier_id = (SELECT id FROM tender_system_user WHERE name = %s)),
+        tender_status = 'closed'
+    WHERE id = (SELECT tender_id FROM tender_supplier WHERE supplier_id = (SELECT id FROM tender_system_user WHERE name = %s));
+    """
+
+    # Execute the query
+    cursor.execute(update_query, (name, name, name))
+    conn.commit()
+
+    # Close the cursor and connection
+    cursor.close()
+    conn.close()
+
+    return "Tender ended successfully"
