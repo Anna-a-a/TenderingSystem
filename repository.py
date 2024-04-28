@@ -381,16 +381,14 @@ def end_tender(name):
 
     return "Tender ended successfully"
 
-
 from fastapi.encoders import jsonable_encoder
 
-
 def search_in_json_list(json_list, search_string):
-    # Assuming json_list is a list of Tender objects or similar
-    # Convert each Tender object to a JSON-compatible format
+    # Преобразование каждого объекта Tender в формат, совместимый с JSON
     data = [jsonable_encoder(item) for item in json_list]
 
-    # Now you can safely perform operations on data as if it were a list of dictionaries
-    results = [item for item in data if any(search_string in str(value) for value in item.values())]
+    # Теперь можно безопасно выполнять операции над data, как если бы это был список словарей
+    # Используем lower() для преобразования ключей и значений в нижний регистр перед сравнением
+    results = [item for item in data if any(search_string.lower() in str(value).lower() for value in item.values())]
 
     return results
