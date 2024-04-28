@@ -1,10 +1,11 @@
 import uuid
 from fastapi import FastAPI, Response, HTTPException, Request, Cookie
 from models.tender import Tender
+from models.tender_info import TenderInfo
 from models.tender_suppliers import Tender_suppliers
 from repository import *
 from models.tender import Post_tender
-from models.user import Reg_user, Check_user
+from models.user import Reg_user, Check_user, Info_user
 import psycopg2
 from password_hasher import *
 
@@ -13,7 +14,7 @@ app = FastAPI()
 
 
 @app.get("/tenders")
-async def get_tenders_info(request: Request):
+async def get_tenders_info(request: Request, search=None):
     auth_cookie = request.cookies.get('auth')
     if not is_cookie_exist(auth_cookie):
         raise HTTPException(status_code=404, detail="you are not authorized :(")
@@ -23,8 +24,10 @@ async def get_tenders_info(request: Request):
         tenders.add(Tender(tender_info[i][0], tender_info[i][1], tender_info[i][2], tender_info[i][3], tender_info[i][4],
                            tender_info[i][5],tender_info[i][6], tender_info[i][7], tender_info[i][8], tender_info[i][9],
                            tender_info[i][10], tender_info[i][11], tender_info[i][12], tender_info[i][13], tender_info[i][14], tender_info[i][15]))
-
-    return tenders
+    if search==None:
+        return tenders
+    else:
+        return search_in_json_list(tenders, search)
 
 
 @app.get("/tenders_suppliers/{tender_id}")
@@ -59,8 +62,8 @@ async def get_pending_tenders(tender_id: int, request: Request):
         tenders.append(tender.serialize())
 
     return tenders[0] if tenders else None  # Возвращаем первый тендер или None, если список пуст
-   
-    
+
+
 @app.post("/send_tender_info")
 def insert_tender_info(item: Post_tender):
     conn = psycopg2.connect(
@@ -108,7 +111,27 @@ def registration(item: Reg_user):
 
 @app.post("/tender_supplier")
 async def tender_supplier(supplier_id, price):
-    return send_tender_suplplier_info(supplier_id, price)
+    return send_tender_supplier_info(supplier_id, price)
+
+
+@app.get("/user_info")
+async def user_info(request: Request):
+    auth_cookie = request.cookies.get('auth')
+    if not is_cookie_exist(auth_cookie):
+        raise HTTPException(status_code=404, detail="you are not authorized :(")
+
+    user_data = user_data_by_cookie(auth_cookie)
+    # Correctly initialize the Info_user model with keyword arguments
+    user = Info_user(name=user_data[1], login=user_data[2], email=user_data[5])
+    return user
+
+
+@app.post("/tender_winner")
+def tender_winner(name, request: Request):
+    auth_cookie = request.cookies.get('auth')
+    if not is_cookie_exist(auth_cookie):
+        raise HTTPException(status_code=404, detail="you are not authorized :(")
+    return end_tender(name)
 
 
 if __name__ == "__main__":

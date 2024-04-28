@@ -12,3 +12,9 @@ class Reg_user(BaseModel):
 class Check_user(BaseModel):
     login: str
     password: str
+
+
+class Info_user(BaseModel):
+    name: str
+    login: str
+    email: str

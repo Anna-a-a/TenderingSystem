@@ -5,6 +5,7 @@ from psycopg2 import OperationalError
 from password_hasher import *
 from fastapi import FastAPI, Response, HTTPException
 app = FastAPI()
+import json
 
 
 def fetch_tenders_info():
@@ -137,7 +138,7 @@ def is_user_exist(user):
         conn.close()
 
 
-def send_tender_suplplier_info(supplier_id, price):
+def send_tender_supplier_info(supplier_id, price):
     conn = psycopg2.connect(
         dbname="tendering-system-db",
         user="username",
@@ -301,3 +302,95 @@ def is_cookie_exist(cookie):
     finally:
         cursor.close()
         conn.close()
+
+
+def user_id_by_cookie(auth_cookie):
+    conn = psycopg2.connect(
+        dbname="tendering-system-db",
+        user="username",
+        password="password",
+        host="localhost",
+        port="5432"
+    )
+    cursor = conn.cursor()
+
+    # Define the select query
+    query = """SELECT user_id FROM cookies WHERE cookie=%s"""
+    try:
+        cursor.execute(query, (auth_cookie,))
+        result = cursor.fetchone()
+        if result is not None:
+            return result[0]
+        return False
+    finally:
+        cursor.close()
+        conn.close()
+
+
+def user_data_by_cookie(auth_cookie):
+    id = user_id_by_cookie(auth_cookie)
+    conn = psycopg2.connect(
+        dbname="tendering-system-db",
+        user="username",
+        password="password",
+        host="localhost",
+        port="5432"
+    )
+    cursor = conn.cursor()
+
+    # Define the select query
+    query = """SELECT * FROM tender_system_user WHERE id=%s"""
+    try:
+        cursor.execute(query, (id,))
+        result = cursor.fetchone()
+        if result is not None:
+            return result
+        return False
+    finally:
+        cursor.close()
+        conn.close()
+
+
+def end_tender(name):
+    conn = psycopg2.connect(
+        dbname="tendering-system-db",
+        user="username",
+        password="password",
+        host="localhost",
+        port="5432"
+    )
+    cursor = conn.cursor()
+
+    # SQL query to update the tender table
+    update_query = """
+    UPDATE tender
+    SET end_date_time = NOW(),
+        user_id = (SELECT id FROM tender_system_user WHERE name = %s),
+        first_price = (SELECT price FROM tender_supplier WHERE supplier_id = (SELECT id FROM tender_system_user WHERE name = %s)),
+        tender_status = 'closed'
+    WHERE id = (SELECT tender_id FROM tender_supplier WHERE supplier_id = (SELECT id FROM tender_system_user WHERE name = %s));
+    """
+
+    # Execute the query
+    cursor.execute(update_query, (name, name, name))
+    conn.commit()
+
+    # Close the cursor and connection
+    cursor.close()
+    conn.close()
+
+    return "Tender ended successfully"
+
+
+from fastapi.encoders import jsonable_encoder
+
+
+def search_in_json_list(json_list, search_string):
+    # Assuming json_list is a list of Tender objects or similar
+    # Convert each Tender object to a JSON-compatible format
+    data = [jsonable_encoder(item) for item in json_list]
+
+    # Now you can safely perform operations on data as if it were a list of dictionaries
+    results = [item for item in data if any(search_string in str(value) for value in item.values())]
+
+    return results
