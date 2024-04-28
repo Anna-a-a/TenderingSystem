@@ -15,6 +15,7 @@ app = FastAPI()
 
 @app.get("/tenders")
 async def get_tenders_info(request: Request, search=None):
+    print(search)
     auth_cookie = request.cookies.get('auth')
     if not is_cookie_exist(auth_cookie):
         raise HTTPException(status_code=404, detail="you are not authorized :(")
