@@ -1,6 +1,6 @@
 <template>
 <div class="container">
-        <div class="row">
+        <!-- <div class="row">
             <div class="form-check mr-4">
                 <input class="form-check-input" type="checkbox" value="" id="flexCheckDisabled" disabled>
                 <label class="form-check-label" for="flexCheckDisabled"> Filter 1 (disabled) </label>
@@ -13,7 +13,7 @@
                 <input class="form-check-input" type="checkbox" value="" id="flexCheckCheckedDisabled" checъъked disabled>
                 <label class="form-check-label" for="flexCheckCheckedDisabled"> Filter 3 (disabled) </label>
             </div>
-        </div>
+        </div> -->
         <div class="container mt-3">
         <div class="row">
             <div class="col-md-12">
@@ -35,8 +35,6 @@
         </div>
         <div>
   </div>
-  
-
 </div>
 </template>
 

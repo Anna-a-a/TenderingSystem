@@ -44,6 +44,8 @@
               />
             </div>
             <button type="submit" class="btn btn-primary">Зарегестрироваться</button>
+            &nbsp;
+             <router-link to="/auth" class="btn btn-outline-primary" role="button">Вернуться к авторизации</router-link>
           </form>
         </div>
       </div>
@@ -67,7 +69,7 @@
       onSubmit() {
         const formData = {
           name: this.name,
-          login: this.username, // Используйте this.username вместо this.login
+          login: this.username, 
           user_type: "supplier",
           password: this.password,
           email: this.email,
@@ -81,6 +83,7 @@
             this.username = '';
             this.password = '';
             this.email = '';
+            this.$router.push('/auth');
           })
   
           .catch(error => {

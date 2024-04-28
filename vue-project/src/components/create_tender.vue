@@ -98,6 +98,7 @@
               this.start_date = '';
               this.start_time = '';
               this.end_date = '';
+              this.$router.push('/');
             })
             
             .catch(error => {
