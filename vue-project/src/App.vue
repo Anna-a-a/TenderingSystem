@@ -1,10 +1,10 @@
 <template>
-  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container">
-        <a class="navbar-brand" href="/">BrandName</a>
+        <a class="navbar-brand" href="/">TenderingSystem</a>
         <form class="form-inline my-2 my-lg-0 d-flex justify-content-between w-100">
             <input class="form-control flex-grow-1" type="search" placeholder="Поиск" aria-label="Search" v-model="searchQuery">
-            <button class="btn btn-outline-success my-2 my-sm-0" type="submit" @click.prevent="searchTenders" style="margin-left: 10px;">Искать <i class="fa-solid fa-magnifying-glass"></i></button>
+            <button class="btn btn-outline-info my-2 my-sm-0" type="submit" @click.prevent="searchTenders" style="margin-left: 10px;">Искать <i class="fa-solid fa-magnifying-glass"></i></button>
         </form>
         <div class="px-3">
           <template v-if="!$store.state.isAuthenticated">
@@ -20,13 +20,14 @@
     <div class="row">
       <div class="col-md-4" v-for="tender in tenders" :key="tender.id">
         <div class="card mb-4">
-          <div class="card-body">
+          <div class="card-body card-body__search">
             <h5 class="card-title">{{ tender.title }}</h5>
             <h6 class="card-subtitle mb-2 text-muted">{{ tender.date }} / {{ tender.end_date }}</h6>
-            <p class="card-text">{{ tender.description }}</p>
-            <p class="card-text"><strong>Местоположение:</strong> {{ tender.delivery_area }}, {{ tender.delivery_address }}</p>
+            <p class="card-text card-text__search">{{ tender.description }}</p>
+            <p class="card-text"><strong>Область:</strong> {{ tender.delivery_area }}</p>
+            <p class="card-text"><strong>Место:</strong> {{ tender.delivery_address }}</p>
             <p class="card-text"><strong>Начальная цена:</strong> {{ tender.first_price }}</p>
-            <router-link :to="'/tender/' + tender.id" class="btn btn-primary">Подробнее</router-link>
+            <router-link :to="'/tender/' + tender.id" class="btn btn-primary ">Подробнее</router-link>
           </div>
         </div>
       </div>
@@ -85,4 +86,3 @@ export default {
 </script>
 
 
-Lorem ipsum dolor sit amet consectetur adipisicing elit. Cumque harum doloribus est quisquam culpa, id asperiores illo molestiae? Quas, dolores ullam dolore similique velit libero nulla soluta corrupti suscipit maiores aspernatur temporibus, debitis blanditiis officiis possimus explicabo sit ratione iure itaque magni? Quia mollitia iste libero voluptatum explicabo quod iusto corporis, impedit eligendi aut obcaecati rerum esse expedita cum in assumenda cupiditate qui velit sint fuga provident labore rem alias aliquam. Sunt distinctio non iusto mollitia tempore? Nihil exercitationem ipsum sequi a, harum nam ducimus laudantium maxime maiores temporibus in. In voluptas at officia quasi consectetur quae vel modi ipsum.

@@ -5,13 +5,14 @@
 
 .round { /*Кнопка авторизации*/
     width: 50px; height: 50px; /* Размеры кнопки */
-    background-color: #bfb5b4; /* Цвет фона */
+    background-color: #d9d4d4; /* Цвет фона */
     border-radius: 50%; /* Радиус скругления */
     border: 2px solid; /* Убираем рамку вокруг кнопки */
     vertical-align: top; /* Выравнивание по верху */
 }
 
 .fa-user{ /*Иконка юзера*/
+    color: rgb(0, 0, 0);
     font-size: 24px;
 }
 
@@ -68,3 +69,96 @@
 }
 
 
+
+.mycard {
+    background: #f5f7f6;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border-radius: 20px;
+    margin-bottom: 30px;
+    font-family: 'Helvetica Now Var', 'Verdana', sans-serif;
+    padding-bottom: 10px;
+    transition: box-shadow 0.3s ease; /* добавляем плавный переход тени */
+    cursor: pointer; /* делаем карточку кликабельной */
+}
+
+.mycard:hover {
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.214); /* добавляем тень при наведении */
+}
+
+
+.mycard-head,
+.mycard-body {
+    display: flex;
+    justify-content: space-between;
+    text-align: center;
+    align-items: center;
+}
+
+.mycard-head {
+    background-color: #c1d5f5;
+    padding: 10px 0px;
+    box-sizing: border-box;
+    border-radius: 20px 20px 0 0;
+}
+
+.mycard-col {
+    width: 33.33%;
+}
+
+.mycard-col__content {
+    padding: 10px 30px;
+}
+
+.mycard-body .mycard-col:first-child .mycard-col__content {
+    text-align: left;
+}
+
+.mycard-head .mycard-col:first-child {
+    width: 50%;
+}
+
+.mycard-head .mycard-col:nth-child(2),
+.mycard-head .mycard-col:nth-child(3) {
+    width: 25%;
+}
+
+.mycard-head .mycard-col:nth-child(1) {
+    width: 50%;
+}
+
+.mycard-body .mycard-col:first-child {
+    width: 50%;
+}
+
+.mycard-body .mycard-col:nth-child(2),
+.mycard-body .mycard-col:nth-child(3) {
+    width: 25%;
+}
+
+.mycard-body .mycard-col:first-child .mycard-col__content {
+    text-align: left;
+    flex-grow: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3; /* ограничение в 3 строки */
+    height: 5.4em; /* фиксированная высота в 3 строки */
+    line-height: 1.2; /* высота строки */
+}
+
+.card-text__search {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3; /* ограничение в 3 строки */
+    height: 7.4em; /* фиксированная высота в 3 строки */
+    line-height: 1.2; /* высота строки */
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.card-body__search {
+    height: 385px;
+}

@@ -14,7 +14,7 @@
                 <label class="form-check-label" for="flexCheckCheckedDisabled"> Filter 3 (disabled) </label>
             </div>
         </div> -->
-        <div class="container mt-3">
+        <!-- <div class="container mt-3">
         <div class="row">
             <div class="col-md-12">
             <div class="card mb-3" v-for="tender in tenders" :key="tender.id">
@@ -34,7 +34,51 @@
         </div>
         </div>
         <div>
-  </div>
+  </div> -->
+
+
+
+    <div class="mycard" v-for="tender in tenders" :key="tender.id">
+        <div class="mycard-head">
+            <div class="mycard-col">
+                <div>
+                  Тендер №{{ tender.id }} от {{ tender.date }}
+                </div>
+            </div>
+            <div class="mycard-col">
+                <div>
+                    Место поставки
+                </div>
+            </div>
+            <div class="mycard-col">
+                <div>
+                    Цена
+                </div>
+            </div>
+        </div>
+        <div class="mycard-body">
+            <div class="mycard-col">
+                <div class="mycard-col__content">
+                  {{ tender.description }}
+                </div>
+            </div>
+            <div class="mycard-col">
+                <div class="mycard-col__content">
+                  {{ tender.delivery_area }}, {{ tender.delivery_address }}
+                </div>
+            </div>
+            <div class="mycard-col">
+                <div class="mycard-col__content">
+                  {{ tender.first_price }} ₽
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
 </div>
 </template>
 
