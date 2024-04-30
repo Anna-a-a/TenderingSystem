@@ -3,8 +3,8 @@
     <div class="container">
         <a class="navbar-brand" href="/">TenderingSystem</a>
         <form class="form-inline my-2 my-lg-0 d-flex justify-content-between w-100">
-            <input class="form-control flex-grow-1" type="search" placeholder="Поиск" aria-label="Search" v-model="searchQuery">
-            <button class="btn btn-outline-info my-2 my-sm-0" type="submit" @click.prevent="searchTenders" style="margin-left: 10px;">Искать <i class="fa-solid fa-magnifying-glass"></i></button>
+            <input class="form-control flex-grow-1" type="search" placeholder="Поиск" aria-label="Search" v-model="searchQuery" @input="searchTenders">
+            <button class="btn btn-outline-info my-2 my-sm-0" type="submit" style="margin-left: 10px;">Искать <i class="fa-solid fa-magnifying-glass"></i></button>
         </form>
         <div class="px-3">
           <template v-if="!$store.state.isAuthenticated">
@@ -26,7 +26,7 @@
             <p class="card-text card-text__search">{{ tender.description }}</p>
             <p class="card-text"><strong>Область:</strong> {{ tender.delivery_area }}</p>
             <p class="card-text"><strong>Место:</strong> {{ tender.delivery_address }}</p>
-            <p class="card-text"><strong>Начальная цена:</strong> {{ tender.first_price }}</p>
+            <p class="card-text"><strong>Начальная цена:</strong> {{ tender.first_price }} ₽</p>
             <router-link :to="'/tender/' + tender.id" class="btn btn-primary ">Подробнее</router-link>
           </div>
         </div>
@@ -48,6 +48,11 @@ export default {
   },
   methods: {
     async searchTenders() {
+      if (this.searchQuery.length < 1) {
+        this.tenders = [];
+        return;
+      }
+
       const response = await fetch(`/tenders?search=${this.searchQuery}`);
       const data = await response.json();
 
@@ -84,5 +89,3 @@ export default {
   }
 }
 </script>
-
-

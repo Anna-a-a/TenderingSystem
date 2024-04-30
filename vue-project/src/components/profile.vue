@@ -15,8 +15,8 @@
           </div>
           <div class="data-form-buttons">
             <button @click="editLogin" v-if="!editingLogin" class="btn-edit"><i class="fa-solid fa-pen-to-square"></i></button>
-            <button @click="saveLogin" v-if="editingLogin" class="btn-edit btn-edit__accept"><i class="fa-solid fa-check"></i></button>
-            <button @click="cancelEditLogin" v-if="editingLogin" class="btn-edit btn-edit__cancel"><i class="fa-solid fa-xmark"></i></button>
+            <button @click="saveLogin" v-if="editingLogin" class="btn-edit green"><i class="fa-solid fa-check"></i></button>
+            <button @click="cancelEditLogin" v-if="editingLogin" class="btn-edit red"><i class="fa-solid fa-xmark"></i></button>
           </div>
         </div>
         <div class="data-form">
@@ -26,8 +26,8 @@
           </div>
           <div class="data-form-buttons">
             <button @click="editEmail" v-if="!editingEmail" class="btn-edit"><i class="fa-solid fa-pen-to-square"></i></button>
-            <button @click="saveEmail" v-if="editingEmail" class="btn-edit btn-edit__accept"><i class="fa-solid fa-check"></i></button>
-            <button @click="cancelEditEmail" v-if="editingEmail" class="btn-edit btn-edit__cancel"><i class="fa-solid fa-xmark"></i></button>
+            <button @click="saveEmail" v-if="editingEmail" class="btn-edit green"><i class="fa-solid fa-check"></i></button>
+            <button @click="cancelEditEmail" v-if="editingEmail" class="btn-edit red"><i class="fa-solid fa-xmark"></i></button>
           </div>
         </div>
         <div class="data-form">
@@ -37,8 +37,8 @@
           </div>
           <div class="data-form-buttons">
             <button @click="editName" v-if="!editingName" class="btn-edit"><i class="fa-solid fa-pen-to-square"></i></button>
-            <button @click="saveName" v-if="editingName" class="btn-edit btn-edit__accept"><i class="fa-solid fa-check"></i></button>
-            <button @click="cancelEditName" v-if="editingName" class="btn-edit btn-edit__cancel"><i class="fa-solid fa-xmark"></i></button>
+            <button @click="saveName" v-if="editingName" class="btn-edit green"><i class="fa-solid fa-check"></i></button>
+            <button @click="cancelEditName" v-if="editingName" class="btn-edit red"><i class="fa-solid fa-xmark"></i></button>
           </div>
         </div>
       </div>
