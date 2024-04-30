@@ -79,12 +79,6 @@
     margin-bottom: 30px;
     font-family: 'Helvetica Now Var', 'Verdana', sans-serif;
     padding-bottom: 10px;
-    transition: box-shadow 0.3s ease; /* добавляем плавный переход тени */
-    cursor: pointer; /* делаем карточку кликабельной */
-}
-
-.mycard:hover {
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.214); /* добавляем тень при наведении */
 }
 
 
@@ -94,6 +88,23 @@
     justify-content: space-between;
     text-align: center;
     align-items: center;
+    transition: box-shadow 0.3s ease; 
+    cursor: pointer;
+    padding-bottom: 10px;
+    
+}
+
+.mycard-tender {
+    border-bottom: 0.1px solid #f00;
+}
+
+.mycard-tender:last-child {
+    border-bottom: none;
+}
+
+
+.mycard-body:hover {
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.214); 
 }
 
 .mycard-head {
@@ -101,10 +112,16 @@
     padding: 10px 0px;
     box-sizing: border-box;
     border-radius: 20px 20px 0 0;
+    height: 70px;
+    cursor: default;
 }
 
 .mycard-col {
     width: 33.33%;
+}
+
+.tender-name {
+    font-size: 14px;
 }
 
 .mycard-col__content {
@@ -145,7 +162,7 @@
     display: -webkit-box;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 3; /* ограничение в 3 строки */
-    height: 5.4em; /* фиксированная высота в 3 строки */
+    height: 8em; /* фиксированная высота в 3 строки */
     line-height: 1.2; /* высота строки */
 }
 
