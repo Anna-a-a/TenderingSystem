@@ -1,5 +1,4 @@
 FastAPI~=0.92.0
-uvicorn
 Tender
 psycopg2-binary
 

@@ -8,7 +8,7 @@ from models.tender import Post_tender
 from models.user import Reg_user, Check_user, Info_user
 import psycopg2
 from password_hasher import *
-
+import json
 
 app = FastAPI()
 
@@ -94,11 +94,18 @@ async def login(item: Check_user, response: Response):
     hash = is_user_exist(item)
     if hash is not None:
         response.set_cookie(key="auth", value=hash)
-        user_id = user_id_by_login(item.login, hash)
-        insert_cookie(user_id, hash)
-        return {"message": "Успешная авторизация"}
+        user = user_id_by_login(item.login, hash)
+        if user:
+            user_id = user[0]
+            usertype = user[1]
+            insert_cookie(user_id, hash)
+            return {"message": "Успешная авторизация",
+                    "user_type": f"{usertype}"}
+        else:
+            return {"message": "Пользователь не найден"}
     else:
         return {"message": "Пользователь не найден"}
+
 
 
 @app.post("/registration")
@@ -120,7 +127,7 @@ async def user_info(request: Request):
 
     user_data = user_data_by_cookie(auth_cookie)
     # Correctly initialize the Info_user model with keyword arguments
-    user = Info_user(name=user_data[1], login=user_data[2], email=user_data[5])
+    user = Info_user(name=user_data[1], login=user_data[2], email=user_data[5], user_type=user_data[3])
     return user
 
 
