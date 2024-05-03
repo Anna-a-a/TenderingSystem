@@ -5,8 +5,8 @@ from psycopg2 import OperationalError
 from password_hasher import *
 from fastapi import FastAPI, Response, HTTPException
 app = FastAPI()
+from fastapi.encoders import jsonable_encoder
 import json
-
 
 def fetch_tenders_info():
     # Database connection parameters
@@ -203,6 +203,10 @@ def add_user(user, hashed_password) :
         conn.close()
 
 
+import psycopg2
+
+import psycopg2
+
 def user_id_by_login(login, password_hash):
     conn = psycopg2.connect(
         dbname="tendering-system-db",
@@ -213,17 +217,19 @@ def user_id_by_login(login, password_hash):
     )
     cursor = conn.cursor()
 
-    # Define the select query
-    query = """SELECT id FROM tender_system_user WHERE login=%s and password_hash=%s"""
+    query = """SELECT id, user_type FROM tender_system_user WHERE login=%s and password_hash=%s"""
     try:
         cursor.execute(query, (login, password_hash,))
         result = cursor.fetchone()
         if result is not None:
-            return result[0]
-        return False
+            return [result[0], result[1]]
+        return None # Изменено с False на None
     finally:
         cursor.close()
         conn.close()
+
+
+
 
 
 def insert_cookie(user_id, cookie):
