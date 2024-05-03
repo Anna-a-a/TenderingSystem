@@ -7,12 +7,7 @@
             <button class="btn btn-outline-info my-2 my-sm-0" type="submit" style="margin-left: 10px;">Искать <i class="fa-solid fa-magnifying-glass"></i></button>
         </form>
         <div class="px-3">
-          <template v-if="!$store.state.isAuthenticated">
             <router-link to="/auth"><button class="round"><i class="fa-solid fa-user"></i></button></router-link>
-          </template>
-          <template v-else>
-            <router-link to="/profile"><button class="round"><i class="fa-solid fa-user"></i></button></router-link>
-          </template>
         </div>
     </div>
   </nav>
