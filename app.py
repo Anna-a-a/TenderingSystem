@@ -14,7 +14,8 @@ app = FastAPI()
 
 
 @app.get("/tenders")
-async def get_tenders_info(request: Request):
+async def get_tenders_info(request: Request, search=None):
+    print(search)
     auth_cookie = request.cookies.get('auth')
     if not is_cookie_exist(auth_cookie):
         raise HTTPException(status_code=404, detail="you are not authorized :(")
@@ -24,8 +25,10 @@ async def get_tenders_info(request: Request):
         tenders.add(Tender(tender_info[i][0], tender_info[i][1], tender_info[i][2], tender_info[i][3], tender_info[i][4],
                            tender_info[i][5],tender_info[i][6], tender_info[i][7], tender_info[i][8], tender_info[i][9],
                            tender_info[i][10], tender_info[i][11], tender_info[i][12], tender_info[i][13], tender_info[i][14], tender_info[i][15]))
-
-    return tenders
+    if search==None:
+        return tenders
+    else:
+        return search_in_json_list(tenders, search)
 
 
 @app.get("/tenders_suppliers/{tender_id}")

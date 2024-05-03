@@ -6,6 +6,7 @@ from password_hasher import *
 from fastapi import FastAPI, Response, HTTPException
 app = FastAPI()
 from fastapi.encoders import jsonable_encoder
+import json
 
 def fetch_tenders_info():
     # Database connection parameters
@@ -385,3 +386,15 @@ def end_tender(name):
     conn.close()
 
     return "Tender ended successfully"
+
+from fastapi.encoders import jsonable_encoder
+
+def search_in_json_list(json_list, search_string):
+    # Преобразование каждого объекта Tender в формат, совместимый с JSON
+    data = [jsonable_encoder(item) for item in json_list]
+
+    # Теперь можно безопасно выполнять операции над data, как если бы это был список словарей
+    # Используем lower() для преобразования ключей и значений в нижний регистр перед сравнением
+    results = [item for item in data if any(search_string.lower() in str(value).lower() for value in item.values())]
+
+    return results
