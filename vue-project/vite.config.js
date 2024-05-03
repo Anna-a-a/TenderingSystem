@@ -56,6 +56,11 @@ export default defineConfig({
         "ws": true,
         "changeOrigin": true
       },
+      "^/user_info": {
+        "target": API_URL,
+        "ws": true,
+        "changeOrigin": true
+      },
          }
      }
 })

@@ -23,6 +23,9 @@
                  placeholder="Введите Ваш пароль"
                />
              </div>
+             <div v-if="errorMessage" class="alert alert-danger" role="alert">
+              {{ errorMessage }}
+            </div>
              <button type="submit" class="btn btn-primary">Войти</button>
              &nbsp;
              <router-link to="/regist" class="btn btn-outline-primary" role="button">К Регистрации</router-link>
@@ -44,6 +47,8 @@
     },
     methods: {
        async onSubmit() {
+        this.errorMessage = '';
+
          try {
            const response = await axios.post('/login', {
              login: this.login,
@@ -52,11 +57,13 @@
    
            // Обработка успешного ответа
            console.log(response.data);
-           // Здесь вы можете перенаправить пользователя на другую страницу или выполнить другие действия
+           this.$store.commit('setAuthentication', true);
+           this.$router.push('/');
          } catch (error) {
            // Обработка ошибки
            console.error(error);
            // Здесь вы можете показать сообщение об ошибке пользователю
+           this.errorMessage = 'Неверный логин или пароль';
          }
        },
     },

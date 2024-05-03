@@ -7,6 +7,7 @@ import mytenders from "./components/mytenders.vue";
 import myresponse from "./components/myresponse.vue";
 import authorization from "./components/authorization.vue";
 import registration from "./components/registration.vue";
+import tender from "./components/tender.vue";
 import participants from "./components/participants.vue";
 
 
@@ -20,7 +21,8 @@ export default createRouter({
         { path: '/mytenders', component: mytenders },
         { path: '/myresponse', component: myresponse },
         { path: '/auth', component: authorization},
-        { path: '/regist', component: registration},
-        { path: '/participants', component: participants}
+        { path: '/regist', component: registration}, 
+        { path: '/tender/:id', component: tender, props: true },
+        { path: '/participants', component: participants},
     ]
 })

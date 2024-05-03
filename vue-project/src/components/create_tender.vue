@@ -44,7 +44,7 @@
                       </div>
                     </div>
 
-                      <button type="submit" class="btn btn-primary">Отправить</button>
+                      <button type="submit" class="btn btn-primary" style="margin-bottom: 30px;">Отправить</button>
                       
                     </form>
                 </div>
@@ -98,6 +98,7 @@
               this.start_date = '';
               this.start_time = '';
               this.end_date = '';
+              // this.$router.push('/');
             })
             
             .catch(error => {
