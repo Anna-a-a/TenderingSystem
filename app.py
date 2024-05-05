@@ -15,7 +15,6 @@ app = FastAPI()
 
 @app.get("/tenders")
 async def get_tenders_info(request: Request, search=None):
-    print(search)
     auth_cookie = request.cookies.get('auth')
     if not is_cookie_exist(auth_cookie):
         raise HTTPException(status_code=404, detail="you are not authorized :(")
@@ -97,18 +96,11 @@ async def login(item: Check_user, response: Response):
     hash = is_user_exist(item)
     if hash is not None:
         response.set_cookie(key="auth", value=hash)
-        user = user_id_by_login(item.login, hash)
-        if user:
-            user_id = user[0]
-            usertype = user[1]
-            insert_cookie(user_id, hash)
-            return {"message": "Успешная авторизация",
-                    "user_type": f"{usertype}"}
-        else:
-            return {"message": "Пользователь не найден"}
+        user_id = user_id_by_login(item.login, hash)
+        insert_cookie(user_id, hash)
+        return {"message": "Успешная авторизация"}
     else:
         return {"message": "Пользователь не найден"}
-
 
 
 @app.post("/registration")
@@ -130,7 +122,7 @@ async def user_info(request: Request):
 
     user_data = user_data_by_cookie(auth_cookie)
     # Correctly initialize the Info_user model with keyword arguments
-    user = Info_user(name=user_data[1], login=user_data[2], email=user_data[5], user_type=user_data[3])
+    user = Info_user(name=user_data[1], user_type=user_data[3], login=user_data[2], email=user_data[5])
     return user
 
 
