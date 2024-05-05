@@ -141,6 +141,14 @@ def tender_winner(name, request: Request):
     return end_tender(name)
 
 
+@app.post("/supplier_response")
+def supplier_response(tender_id, price, supplier_id, request: Request):
+    auth_cookie = request.cookies.get('auth')
+    if not is_cookie_exist(auth_cookie):
+        raise HTTPException(status_code=404, detail="you are not authorized :(")
+    return add_supplier_for_tender(tender_id, price, supplier_id)
+
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8001)

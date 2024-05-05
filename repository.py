@@ -6,7 +6,7 @@ from password_hasher import *
 from fastapi import FastAPI, Response, HTTPException
 app = FastAPI()
 from fastapi.encoders import jsonable_encoder
-import json
+
 
 def fetch_tenders_info():
     # Database connection parameters
@@ -203,10 +203,6 @@ def add_user(user, hashed_password) :
         conn.close()
 
 
-import psycopg2
-
-import psycopg2
-
 def user_id_by_login(login, password_hash):
     conn = psycopg2.connect(
         dbname="tendering-system-db",
@@ -227,9 +223,6 @@ def user_id_by_login(login, password_hash):
     finally:
         cursor.close()
         conn.close()
-
-
-
 
 
 def insert_cookie(user_id, cookie):
@@ -387,7 +380,31 @@ def end_tender(name):
 
     return "Tender ended successfully"
 
-from fastapi.encoders import jsonable_encoder
+
+def add_supplier_for_tender(tender_id, price, supplier_id):
+    conn = psycopg2.connect(
+        dbname="tendering-system-db",
+        user="username",
+        password="password",
+        host="localhost",
+        port="5432"
+    )
+    cursor = conn.cursor()
+    update_query = """
+    INSERT INTO tender_supplier(tender_id, price, supplier_id, is_winner)
+VALUES (%s , %s, %s, 'false');
+        """
+
+    # Execute the query
+    cursor.execute(update_query, (tender_id, price, supplier_id))
+    conn.commit()
+
+    # Close the cursor and connection
+    cursor.close()
+    conn.close()
+
+    return "Supplier response is successfully done!"
+
 
 def search_in_json_list(json_list, search_string):
     # Преобразование каждого объекта Tender в формат, совместимый с JSON
