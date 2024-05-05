@@ -109,8 +109,6 @@ async def login(item: Check_user, response: Response):
     else:
         return {"message": "Пользователь не найден"}
 
-
-
 @app.post("/registration")
 def registration(item: Reg_user):
     hashed_password = hash_password(item.password)
@@ -126,7 +124,7 @@ async def tender_supplier(supplier_id, price):
 async def user_info(request: Request):
     auth_cookie = request.cookies.get('auth')
     if not is_cookie_exist(auth_cookie):
-        raise HTTPException(status_code=404, detail="you are not authorized :(")
+        return None
 
     user_data = user_data_by_cookie(auth_cookie)
     # Correctly initialize the Info_user model with keyword arguments
