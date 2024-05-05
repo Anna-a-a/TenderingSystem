@@ -16,6 +16,6 @@ class Check_user(BaseModel):
 
 class Info_user(BaseModel):
     name: str
+    user_type: str
     login: str
     email: str
-    user_type: str

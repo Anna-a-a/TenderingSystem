@@ -109,6 +109,7 @@ async def login(item: Check_user, response: Response):
     else:
         return {"message": "Пользователь не найден"}
 
+
 @app.post("/registration")
 def registration(item: Reg_user):
     hashed_password = hash_password(item.password)
