@@ -2,12 +2,14 @@
   <div class="container">
     <div v-if="tender">
     <div class="tender-card">
-      <p><h4>{{ tender.title }}</h4></p>
-      <p><i class="fa-solid fa-location-dot red"></i> {{ tender.delivery_area }}, {{ tender.delivery_address }}</p>
-      <p><i class="fa-regular fa-calendar"></i> {{ tender.date }} - {{ tender.end_date }}</p>
-      <p>Цена: {{ tender.first_price }} <i class="fa-solid fa-ruble-sign"></i></p>
-      <p>{{ tender.description }}</p>
-      
+      <p class="overflow-text"><h4>{{ tender.title }}</h4></p>
+      <p class="overflow-text"><i class="fa-solid fa-location-dot red"></i> {{ tender.delivery_area }}, {{ tender.delivery_address }}</p>
+      <p class="overflow-text"><i class="fa-regular fa-calendar"></i> {{ tender.date }} ({{ tender.time }}) - {{ tender.end_date }} ({{ tender.end_time }})</p>
+      <p class="overflow-text">Цена: {{ tender.first_price }} <i class="fa-solid fa-ruble-sign"></i></p>
+      <p class="overflow-text">{{ tender.description }}</p>
+      <div>
+        <button class="mybtn" @click="goToAnswerPage(tender.id)">Ответить</button>
+      </div>
     </div>
   </div>
     <div v-else>
@@ -41,8 +43,9 @@ export default {
       }
       else {
         this.tender.date = new Date(this.tender.created_data_time).toLocaleDateString();
+        this.tender.time = new Date(this.tender.start_data_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
         this.tender.end_date = new Date(this.tender.end_data_time).toLocaleDateString();
-        this.tender.end_time = new Date(this.tender.end_data_time).toLocaleTimeString();
+        this.tender.end_time = new Date(this.tender.end_data_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
         this.tender.delivery_address = this.tender.delivery_address.charAt(0).toUpperCase() + this.tender.delivery_address.slice(1);
         this.tender.delivery_area = this.tender.delivery_area.charAt(0).toUpperCase() + this.tender.delivery_area.slice(1);
       }
@@ -50,8 +53,11 @@ export default {
     .catch(error => {
       console.error(error);
     });
-}
+},
 
+goToAnswerPage(id) {
+  this.$router.push(`/tender/${id}/response`);
+}
 
   }
 }

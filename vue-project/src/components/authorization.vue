@@ -57,7 +57,6 @@
    
            // Обработка успешного ответа
            console.log(response.data);
-           this.$store.commit('setAuthentication', true);
            this.$router.push('/');
          } catch (error) {
            // Обработка ошибки

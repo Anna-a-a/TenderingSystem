@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <div class="mycard">
+    <div class="mycard" v-if="tenders.length > 0">
       <div class="mycard-head">
         <div class="mycard-col">
           <div>
@@ -21,7 +21,7 @@
       <div class="mycard-body mycard-tender" v-for="tender in tenders" :key="tender.id" @click="goToTender(tender.id)">
         <div class="mycard-col">
           <div class="mycard-col__content">
-            <span class="tender-name">Тендер №{{ tender.id }} от {{ tender.date }}</span>
+            <span class="tender-name">Тендер №{{ tender.id }} от {{ tender.date }} до {{ tender.end_date }}</span>
             <br>
             {{ tender.description }}
           </div>
@@ -60,6 +60,7 @@ export default {
           for (let tender of response.data) {
             let id = tender.id
             let date = new Date(tender.created_data_time).toLocaleDateString()
+            let time = new Date(tender.start_data_time).toLocaleTimeString();
             let description = tender.description
             let end_date = new Date(tender.end_data_time).toLocaleDateString()
             let end_time = new Date(tender.end_data_time).toLocaleTimeString()
@@ -74,6 +75,7 @@ export default {
             this.tenders.push({
               id,
               date,
+              time,
               description,
               end_date,
               end_time,
@@ -83,7 +85,7 @@ export default {
               title
             })
           }
-          this.tenders.sort((a, b) => a.id - b.id)
+          this.tenders.sort((a, b) => b.id - a.id)
         })
         .catch(error => {
           console.error(error)
