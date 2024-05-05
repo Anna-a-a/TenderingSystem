@@ -6,6 +6,7 @@ from models.tender_suppliers import Tender_suppliers
 from repository import *
 from models.tender import Post_tender
 from models.user import Reg_user, Check_user, Info_user
+from models.supplier_response import Supplier_response
 import psycopg2
 from password_hasher import *
 import json
@@ -142,11 +143,12 @@ def tender_winner(name, request: Request):
 
 
 @app.post("/supplier_response")
-def supplier_response(tender_id, price, supplier_login, request: Request):
+def supplier_response(item: Supplier_response, request: Request):
     auth_cookie = request.cookies.get('auth')
     if not is_cookie_exist(auth_cookie):
         raise HTTPException(status_code=404, detail="you are not authorized :(")
-    return add_supplier_for_tender(tender_id, price, supplier_login)
+
+    return add_supplier_for_tender(item.tender_id, item.price, item.login)
 
 
 if __name__ == "__main__":
