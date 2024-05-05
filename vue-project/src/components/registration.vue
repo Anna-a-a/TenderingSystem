@@ -43,7 +43,6 @@
                 placeholder="Введите пароль"
               />
             </div>
-            <div class="text-danger" ref="registration_error" v-show="registrationError">*Проверьте ваши данные. Среди существующих, найден пользователь с аналогичными данными.</div>
             <button type="submit" class="btn btn-primary">Зарегестрироваться</button>
             &nbsp;
              <router-link to="/auth" class="btn btn-outline-primary" role="button">Вернуться к авторизации</router-link>
@@ -55,7 +54,6 @@
   
   <script>
   import axios from 'axios';
-  import { ref } from 'vue'
   
   export default {
     data() {
@@ -64,8 +62,7 @@
         username: '',
         user_type: '',
         password: '',
-        email: '',
-        registrationError: false,
+        email: ''
       };
     },
     methods: {
@@ -86,7 +83,6 @@
             this.username = '';
             this.password = '';
             this.email = '';
-            this.registrationError = false;
             this.$router.push('/auth');
           })
   
@@ -94,7 +90,6 @@
             console.log(error.response.data);
             console.log(error.response.status);
             console.log(error.response);
-            this.registrationError = true;
           });
       }
     }
