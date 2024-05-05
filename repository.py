@@ -257,6 +257,28 @@ def insert_cookie(user_id, cookie):
         conn.close()
 
 
+def supplier_id_by_login(login):
+    conn = psycopg2.connect(
+        dbname="tendering-system-db",
+        user="username",
+        password="password",
+        host="localhost",
+        port="5432"
+    )
+    cursor = conn.cursor()
+
+    query = """SELECT id FROM tender_system_user WHERE login=%s"""
+    try:
+        cursor.execute(query, (login,))
+        result = cursor.fetchone()
+        if result is not None:
+            return result[0]
+        return None # Изменено с False на None
+    finally:
+        cursor.close()
+        conn.close()
+
+
 def is_cookie_user_exist(user_id):
     conn = psycopg2.connect(
         dbname="tendering-system-db",
@@ -381,7 +403,8 @@ def end_tender(name):
     return "Tender ended successfully"
 
 
-def add_supplier_for_tender(tender_id, price, supplier_id):
+def add_supplier_for_tender(tender_id, price, supplier_login):
+    supplier_id = supplier_id_by_login(supplier_login)
     conn = psycopg2.connect(
         dbname="tendering-system-db",
         user="username",
