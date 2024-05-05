@@ -19,4 +19,3 @@ class Info_user(BaseModel):
     user_type: str
     login: str
     email: str
-    user_type: str
