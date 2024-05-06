@@ -42,12 +42,16 @@
           </div>
         </div>
       </div>
+      <div>
+        <button class="mybtn" @click="removeCookies">Выйти</button>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
 import axios from 'axios';
+import Cookies from 'js-cookie';
 
 export default {
   data() {
@@ -71,6 +75,14 @@ export default {
     }
   },
   methods: {
+    removeCookies() {
+      Cookies.remove('auth');
+      // location.reload();
+      this.$router.push('/auth');
+      setTimeout(function() {
+      location.reload();
+    }, 20);
+    },
     editEmail() {
       this.editingEmail = true;
     },

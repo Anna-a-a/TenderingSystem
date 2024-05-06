@@ -4,7 +4,7 @@
         <a class="navbar-brand" href="/">TenderingSystem</a>
         <form class="form-inline my-2 my-lg-0 d-flex justify-content-between w-100">
             <input class="form-control flex-grow-1" type="search" placeholder="Поиск" aria-label="Search" v-model="searchQuery" @input="searchTenders">
-            <button class="btn btn-outline-info my-2 my-sm-0" type="submit" style="margin-left: 10px;">Искать <i class="fa-solid fa-magnifying-glass"></i></button>
+            <button class="btn btn-outline-info my-2 my-sm-0" type="submit" style="margin-left: 10px;" @click="clearSearch">Очистить поиск <i class="fa-solid fa-eraser"></i></button>
             <router-link to="/create" v-if="userType == 'customer'">
                 <button class="btn btn-outline-info my-2 my-sm-0 ml-2 btn-add"><i class="fa-solid fa-plus"></i></button>
             </router-link>
@@ -129,7 +129,10 @@ export default {
       } catch (error) {
         console.error(error);
       }
-    }
+    },
+    clearSearch() {
+    this.searchQuery = '';
+  },
   },
   created() {
     this.getUserType();

@@ -1,26 +1,36 @@
-#logo-name { /*Логотип*/
+#logo-name {
+    /*Логотип*/
     font-family: Fantasy;
     font-size: 30px;
 }
 
-.round { /*Кнопка авторизации*/
-    width: 50px; height: 50px; /* Размеры кнопки */
-    background-color: #e9e3e3; /* Цвет фона */
-    border-radius: 50%; /* Радиус скругления */
-    border: 2px solid; /* Убираем рамку вокруг кнопки */
-    vertical-align: top; /* Выравнивание по верху */
+.round {
+    /*Кнопка авторизации*/
+    width: 50px;
+    height: 50px;
+    /* Размеры кнопки */
+    background-color: #e9e3e3;
+    /* Цвет фона */
+    border-radius: 50%;
+    /* Радиус скругления */
+    border: 2px solid;
+    /* Убираем рамку вокруг кнопки */
+    vertical-align: top;
+    /* Выравнивание по верху */
 }
 
 .round:hover {
     background-color: #c1d5f5;
 }
 
-.fa-user{ /*Иконка юзера*/
+.fa-user {
+    /*Иконка юзера*/
     color: rgb(0, 0, 0);
     font-size: 24px;
 }
 
-.navbar { /*Отступ от шапки сайта*/
+.navbar {
+    /*Отступ от шапки сайта*/
     margin-bottom: 30px;
 }
 
@@ -33,23 +43,26 @@
     background-color: #f5f7f6;
     padding: 20px;
 }
+
 .menu a {
     display: block;
     margin-bottom: 10px;
     text-decoration: none;
     color: #333;
 }
+
 .menu a:hover {
     text-decoration: none;
     color: #8393d3;
 }
+
 #data {
     border-radius: 10px;
     background-color: #f5f7f6;
     display: inline-block;
     min-width: 300px;
-    padding: 10px; 
-    /* margin-bottom: 20px;  */
+    padding: 10px;
+    margin-bottom: 20px;
 }
 
 .data-form {
@@ -58,14 +71,18 @@
 }
 
 .btn-edit {
-    border: none; /* Убираем рамку */
-    background-color: transparent; /* Убираем фон */
-    margin-left: 5px; /* Убираем отступы */
-    cursor: pointer; /* Меняем курсор при наведении */
+    border: none;
+    /* Убираем рамку */
+    background-color: transparent;
+    /* Убираем фон */
+    margin-left: 5px;
+    /* Убираем отступы */
+    cursor: pointer;
+    /* Меняем курсор при наведении */
 }
 
 .btn-edit__cancel {
-    color:red;
+    color: red;
 }
 
 .btn-edit__accept {
@@ -73,7 +90,7 @@
 }
 
 .red {
-    color:red;
+    color: red;
 }
 
 .green {
@@ -90,7 +107,7 @@
     border-radius: 20px;
     margin-bottom: 30px;
     font-family: 'Helvetica Now Var', 'Verdana', sans-serif;
-    padding-bottom: 10px;
+    /* padding-bottom: 10px; */
 }
 
 
@@ -100,10 +117,10 @@
     justify-content: space-between;
     text-align: center;
     align-items: center;
-    transition: box-shadow 0.3s ease; 
+    transition: box-shadow 0.3s ease;
     cursor: pointer;
     padding-bottom: 10px;
-    
+
 }
 
 .mycard-tender {
@@ -116,7 +133,7 @@
 
 
 .mycard-body:hover {
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.214); 
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.214);
 }
 
 .mycard-head {
@@ -173,17 +190,27 @@
     text-overflow: ellipsis;
     display: -webkit-box;
     -webkit-box-orient: vertical;
-    -webkit-line-clamp: 3; /* ограничение в 3 строки */
-    height: 8em; /* фиксированная высота в 3 строки */
-    line-height: 1.2; /* высота строки */
+    -webkit-line-clamp: 3;
+    /* ограничение в 3 строки */
+    height: 8em;
+    /* фиксированная высота в 3 строки */
+    line-height: 1.2;
+    /* высота строки */
+}
+
+.mycard-body:last-child {
+    border-radius: 0 0 20px 20px;
 }
 
 .card-text__search {
     display: -webkit-box;
     -webkit-box-orient: vertical;
-    -webkit-line-clamp: 3; /* ограничение в 3 строки */
-    height: 7.4em; /* фиксированная высота в 3 строки */
-    line-height: 1.2; /* высота строки */
+    -webkit-line-clamp: 3;
+    /* ограничение в 3 строки */
+    height: 7.4em;
+    /* фиксированная высота в 3 строки */
+    line-height: 1.2;
+    /* высота строки */
     overflow: hidden;
     text-overflow: ellipsis;
 }
@@ -191,7 +218,8 @@
 .card-text__height {
     display: -webkit-box;
     -webkit-box-orient: vertical;
-    -webkit-line-clamp: 1; /* ограничение в 3 строки */
+    -webkit-line-clamp: 1;
+    /* ограничение в 3 строки */
     overflow: hidden;
     text-overflow: ellipsis;
 }
@@ -209,7 +237,7 @@
     margin-bottom: 30px;
     font-family: 'Helvetica Now Var', 'Verdana', sans-serif;
     padding: 20px 40px;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.214); 
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.214);
 }
 
 
@@ -243,3 +271,145 @@
 .mybtn:hover {
     background-color: #69e4e4;
 }
+
+.tender-card-participants {
+    background: #f5f7f6;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border-radius: 20px;
+    margin-bottom: 30px;
+    font-family: 'Helvetica Now Var', 'Verdana', sans-serif;
+    padding: 0;
+    /* Убрать отступы */
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.214);
+}
+
+.tender-card-participants__head {
+    font-size: 20px;
+    background: #c1d5f5;
+    /* Изменить на нужный цвет */
+    color: #000000;
+    /* Изменить цвет текста */
+    padding: 10px 40px;
+    /* Добавить отступы */
+    border-radius: 20px 20px 0 0;
+    /* Изменить радиус углов */
+    text-align: center;
+    /* Выровнять текст по центру */
+}
+
+.tender-card-participants__body {
+    cursor: pointer;
+    padding: 20px;
+    border-bottom: 1px solid black;
+}
+
+.tender-card-participants__body:hover {
+    transition: box-shadow 0.3s ease;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.214);
+}
+
+.tender-card-participants__body:last-child {
+    padding: 20px;
+    border-bottom: 0px;
+}
+
+.tender-card-participants__body-info {
+    margin-bottom: 10px;
+    /* font-size: 18px; */
+}
+
+.tender-card-participants__body:last-child {
+    border-radius: 0 0 20px 20px;
+}
+
+.checkbox.style-c {
+    display: inline-block;
+    position: relative;
+    padding-left: 30px;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.checkbox.style-c input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+}
+
+.checkbox.style-c input:checked~.checkbox__checkmark {
+    background-color: #c1d5f5;
+}
+
+.checkbox.style-c input:checked~.checkbox__checkmark:after {
+    opacity: 1;
+}
+
+.checkbox.style-c:hover input~.checkbox__checkmark {
+    background-color: #eee;
+}
+
+.checkbox.style-c:hover input:checked~.checkbox__checkmark {
+    background-color: #c1d5f5;
+}
+
+.checkbox.style-c .checkbox__checkmark {
+    position: absolute;
+    top: 2px;
+    left: 0;
+    height: 20px;
+    width: 20px;
+    background-color: #eee;
+    transition: background-color 0.25s ease;
+    border-radius: 4px;
+}
+
+.checkbox.style-c .checkbox__checkmark:after {
+    content: "";
+    position: absolute;
+    left: 8px;
+    top: 4px;
+    width: 5px;
+    height: 10px;
+    border: solid #333;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+    opacity: 0;
+    transition: opacity 0.25s ease;
+}
+
+.checkbox.style-c .checkbox__body {
+    color: #333;
+    line-height: 1.4;
+    font-size: 16px;
+}
+
+.filter-container label.checkbox {
+    margin-right: 15px;
+}
+
+.filter-container label.checkbox:last-child {
+    margin-right: 0;
+}
+
+.filter-container {
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.filter-checkboxes {
+    display: flex;
+    justify-content: space-between;
+}
+
+  
+
+  

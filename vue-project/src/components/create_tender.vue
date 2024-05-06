@@ -69,7 +69,8 @@ export default {
       first_price: '',
       delivery_area: '',
       delivery_address: '',
-      userType: null
+      userType: null,
+      user_id: null,
     };
   },
   methods: {
@@ -83,7 +84,7 @@ export default {
         tender_status: "open",
         description: this.description,
         start_date_time: formattedDate,
-        user_id: 1,
+        user_id: this.user_id,
         created_date_time: dateTimeStart,
         end_date_time: dateTimeEnd,
         first_price: this.first_price,
@@ -117,6 +118,7 @@ export default {
       try {
         const response = await axios.get('/user_info');
         this.userType = response.data.user_type;
+        this.user_id = response.data.user_id;
       } catch (error) {
         console.error(error);
       }

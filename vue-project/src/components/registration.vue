@@ -43,7 +43,7 @@
                 placeholder="Введите пароль"
               />
             </div>
-            <button type="submit" class="btn btn-primary">Зарегестрироваться</button>
+            <button type="submit" class="btn btn-primary">Зарегистрироваться</button>
             &nbsp;
              <router-link to="/auth" class="btn btn-outline-primary" role="button">Вернуться к авторизации</router-link>
           </form>

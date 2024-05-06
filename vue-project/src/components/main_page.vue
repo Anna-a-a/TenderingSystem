@@ -1,6 +1,23 @@
 <template>
   <div class="container">
-    <div class="mycard" v-if="tenders.length > 0">
+    <div class="filter-container" v-if="userType">
+      <label class="checkbox style-c">
+        <input type="checkbox" value="open" v-model="filterStatus" @click="updateFilterStatus('open')"/>
+        <div class="checkbox__checkmark"></div>
+        <div class="checkbox__body" >Открытые тендеры</div>
+      </label>
+      <label class="checkbox style-c">
+        <input type="checkbox" value="in progress" v-model="filterStatus" @click="updateFilterStatus('in progress')"/>
+        <div class="checkbox__checkmark"></div>
+        <div class="checkbox__body" >Тендеры в процессе</div>
+      </label>
+      <label class="checkbox style-c">
+        <input type="checkbox" value="closed" v-model="filterStatus" @click="updateFilterStatus('closed')"/>
+        <div class="checkbox__checkmark"></div>
+        <div class="checkbox__body" >Закрытые тендеры</div>
+      </label>
+    </div>
+    <div class="mycard" v-if="sortedTenders.length > 0">
       <div class="mycard-head">
         <div class="mycard-col">
           <div>
@@ -18,7 +35,8 @@
           </div>
         </div>
       </div>
-      <div class="mycard-body mycard-tender" v-for="tender in tenders" :key="tender.id" @click="goToTender(tender.id)">
+      <div class="mycard-body mycard-tender" v-for="tender in sortedTenders" :key="tender.id"
+        @click="goToTender(tender.id)">
         <div class="mycard-col">
           <div class="mycard-col__content">
             <span class="tender-name">Тендер №{{ tender.id }} от {{ tender.date }} до {{ tender.end_date }}</span>
@@ -38,6 +56,8 @@
         </div>
       </div>
     </div>
+    <div class="noresult" v-if="filteredTenders.length == 0 && showNoAuthMessage && !userType"><strong>Вы не
+        авторизовались <i class="fa-solid fa-face-sad-tear"></i></strong></div>
   </div>
 </template>
 
@@ -47,13 +67,39 @@ import axios from 'axios'
 export default {
   data() {
     return {
-      tenders: []
-    }
+      tenders: [],
+      in_progress_tenders: [],
+      closed_tenders: [],
+      showNoAuthMessage: false,
+      filterStatus: [],
+      userType: null,
+    };
   },
   created() {
-    this.fetchTenders()
+    this.getUserType();
+    this.fetchTenders();
+  },
+  mounted() {
+    setTimeout(() => {
+      this.showNoAuthMessage = true;
+    }, 100);
   },
   methods: {
+    updateFilterStatus(status) {
+      if (this.filterStatus.includes(status)) {
+        this.filterStatus = this.filterStatus.filter(item => item !== status);
+      } else {
+        this.filterStatus = [status];
+      }
+    },
+    async getUserType() {
+      try {
+        const response = await axios.get('/user_info');
+        this.userType = response.data.user_type;
+      } catch (error) {
+        console.error(error);
+      }
+    },
     fetchTenders() {
       axios.get('/tenders')
         .then(response => {
@@ -68,36 +114,84 @@ export default {
             let delivery_address = tender.delivery_address
             let first_price = tender.first_price
             let title = tender.title
+            let status = tender.status
 
             delivery_address = delivery_address.charAt(0).toUpperCase() + delivery_address.slice(1);
             delivery_area = delivery_area.charAt(0).toUpperCase() + delivery_area.slice(1);
 
-            this.tenders.push({
-              id,
-              date,
-              time,
-              description,
-              end_date,
-              end_time,
-              delivery_area,
-              delivery_address,
-              first_price,
-              title
-            })
+            if (tender.status == 'open') {
+              this.tenders.push({
+                id,
+                date,
+                time,
+                description,
+                end_date,
+                end_time,
+                delivery_area,
+                delivery_address,
+                first_price,
+                title,
+              });
+            } else if (tender.status == 'in progress') {
+              this.in_progress_tenders.push({
+                id,
+                date,
+                time,
+                description,
+                end_date,
+                end_time,
+                delivery_area,
+                delivery_address,
+                first_price,
+                title,
+              });
+            } else {
+              this.closed_tenders.push({
+                id,
+                date,
+                time,
+                description,
+                end_date,
+                end_time,
+                delivery_area,
+                delivery_address,
+                first_price,
+                title,
+              });
+            }
           }
-          this.tenders.sort((a, b) => b.id - a.id)
         })
         .catch(error => {
           console.error(error)
         })
     },
-    
+
     goToTender(id) {
       const path = `/tender/${String(id)}`;
       this.$router.push(path);
-  }
+    }
 
+  },
+  computed: {
+    filteredTenders() {
+      if (this.filterStatus.length === 0) {
+        return this.tenders.concat(this.in_progress_tenders, this.closed_tenders);
+      }
+      const filtered = [];
+      if (this.filterStatus.includes('open')) {
+        filtered.push(...this.tenders);
+      }
+      if (this.filterStatus.includes('in progress')) {
+        filtered.push(...this.in_progress_tenders);
+      }
+      if (this.filterStatus.includes('closed')) {
+        filtered.push(...this.closed_tenders);
+      }
+      return filtered;
+    },
+    sortedTenders() {
+      return this.filteredTenders.sort((a, b) => b.id - a.id);
+    }
   }
 }
 </script>
-

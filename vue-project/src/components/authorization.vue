@@ -28,7 +28,7 @@
             </div>
              <button type="submit" class="btn btn-primary">Войти</button>
              &nbsp;
-             <router-link to="/regist" class="btn btn-outline-primary" role="button">К Регистрации</router-link>
+             <router-link to="/regist" class="btn btn-outline-primary" role="button">Зарегистрироваться</router-link>
            </form>
          </div>
        </div>
@@ -58,6 +58,9 @@
            // Обработка успешного ответа
            console.log(response.data);
            this.$router.push('/');
+           setTimeout(function() {
+              location.reload();
+            }, 2);
          } catch (error) {
            // Обработка ошибки
            console.error(error);
