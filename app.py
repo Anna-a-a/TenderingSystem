@@ -4,11 +4,12 @@ from models.tender import Tender
 from models.tender_info import TenderInfo
 from models.tender_suppliers import Tender_suppliers
 from repository import *
-from models.tender import Post_tender
+from models.tender import Post_tender, User_tender
 from models.user import Reg_user, Check_user, Info_user
 from models.supplier_response import Supplier_response
 import psycopg2
 from password_hasher import *
+from fastapi.responses import JSONResponse
 import json
 
 app = FastAPI()
@@ -150,6 +151,21 @@ def supplier_response(item: Supplier_response, request: Request):
         raise HTTPException(status_code=403, detail="you are not authorized :(")
 
     return add_supplier_for_tender(item.tender_id, item.price, item.login)
+
+
+@app.get("/user_tenders/{user_id}")
+def user_tenders(user_id: int, request: Request):
+    auth_cookie = request.cookies.get('auth')
+    if not is_cookie_exist(auth_cookie):
+        raise HTTPException(status_code=403, detail="you are not authorized :(")
+    tenders = tenders_by_user_id(user_id)
+    tender_dict = []
+    for i in range(len(tenders)):
+        tender_dict.append(User_tender(tenders[i][0], tenders[i][1], tenders[i][2], tenders[i][3], tenders[i][4],
+                           tenders[i][5], tenders[i][6], tenders[i][7], tenders[i][8], tenders[i][9],
+                           tenders[i][10]))
+
+    return tender_dict
 
 
 if __name__ == "__main__":

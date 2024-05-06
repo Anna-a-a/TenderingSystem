@@ -439,3 +439,24 @@ def search_in_json_list(json_list, search_string):
     results = [item for item in data if any(search_string.lower() in str(value).lower() for value in item.values())]
 
     return results
+
+
+def tenders_by_user_id(user_id):
+    conn = psycopg2.connect(
+        dbname="tendering-system-db",
+        user="username",
+        password="password",
+        host="localhost",
+        port="5432"
+    )
+    cursor = conn.cursor()
+
+    # Define the select query
+    query = """SELECT * FROM tender WHERE user_id=%s"""
+    try:
+        cursor.execute(query, (user_id,))
+        result = cursor.fetchall()  # Use fetchall to get all matching records
+        return result
+    finally:
+        cursor.close()
+        conn.close()
