@@ -42,13 +42,12 @@ def fetch_tenders_info():
     tsup.is_winner AS is_winner
 FROM
     tender t
-JOIN
-    tender_system_user tu ON t.user_id = tu.id AND tu.user_type != 'supplier'
 LEFT JOIN
-    tender_supplier tsup ON t.id = tsup.tender_id AND tsup.is_winner = TRUE
+    tender_system_user tu ON t.user_id = tu.id
+LEFT JOIN
+    tender_supplier tsup ON t.id = tsup.tender_id
 LEFT JOIN
     tender_system_user tu2 ON tsup.supplier_id = tu2.id AND tu2.user_type = 'supplier'
-
     """
 
 
