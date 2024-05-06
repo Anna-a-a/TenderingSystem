@@ -61,6 +61,11 @@ export default defineConfig({
         "ws": true,
         "changeOrigin": true
       },
+      "^/supplier_response": {
+        "target": API_URL,
+        "ws": true,
+        "changeOrigin": true
+      },
          }
      }
 })

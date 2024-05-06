@@ -77,7 +77,7 @@
   
         axios.post('/registration', formData)
           .then(response => {
-            console.log(response);
+            // console.log(response);
             // Очистить форму после успешной отправки
             this.name = '';
             this.username = '';
