@@ -15,7 +15,7 @@ class Check_user(BaseModel):
 
 
 class Info_user(BaseModel):
-    id: int
+    user_id: int
     name: str
     user_type: str
     login: str

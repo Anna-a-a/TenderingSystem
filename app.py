@@ -132,7 +132,7 @@ async def user_info(request: Request):
 
     user_data = user_data_by_cookie(auth_cookie)
     # Correctly initialize the Info_user model with keyword arguments
-    user = Info_user(id=user_data[0], name=user_data[1], login=user_data[2], email=user_data[5], user_type=user_data[3])
+    user = Info_user(user_id=user_data[0], name=user_data[1], login=user_data[2], email=user_data[5], user_type=user_data[3])
     return user
 
 
