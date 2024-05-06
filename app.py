@@ -41,7 +41,7 @@ async def get_pending_tenders(tender_id: int, request: Request):
     # Assuming the new function is named fetch_pending_tender_by_id_new
     tenders = []
     for row in rows:
-        tender_id, tender_description, tender_created_date_time, tender_start_date_time, tender_end_date_time, tender_first_price, tender_title, tender_delivery_address, tender_delivery_area, status_description, user_name, user_login, supplier_ids, supplier_names, supplier_prices, supplier_price, is_winner = row
+        tender_id, tender_description, tender_created_date_time, tender_start_date_time, tender_end_date_time, tender_first_price, tender_title, tender_delivery_address, tender_delivery_area, status_description, user_name, user_login, supplier_ids, supplier_names, supplier_logins, supplier_prices, supplier_price, is_winner = row
         tender = Tender_suppliers(
             id=tender_id,
             description=tender_description,
@@ -57,6 +57,7 @@ async def get_pending_tenders(tender_id: int, request: Request):
             user_login=user_login,
             supplier_ids=supplier_ids,
             supplier_names=supplier_names,
+            supplier_logins=supplier_logins,
             supplier_prices=supplier_prices,
             supplier_price=supplier_price,
             is_winner=is_winner
@@ -138,7 +139,7 @@ async def user_info(request: Request):
 def tender_winner(name, request: Request):
     auth_cookie = request.cookies.get('auth')
     if not is_cookie_exist(auth_cookie):
-        raise HTTPException(status_code=404, detail="you are not authorized :(")
+        raise HTTPException(status_code=403, detail="you are not authorized :(")
     return end_tender(name)
 
 
@@ -146,7 +147,7 @@ def tender_winner(name, request: Request):
 def supplier_response(item: Supplier_response, request: Request):
     auth_cookie = request.cookies.get('auth')
     if not is_cookie_exist(auth_cookie):
-        raise HTTPException(status_code=404, detail="you are not authorized :(")
+        raise HTTPException(status_code=403, detail="you are not authorized :(")
 
     return add_supplier_for_tender(item.tender_id, item.price, item.login)
 

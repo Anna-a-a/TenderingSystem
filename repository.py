@@ -91,6 +91,7 @@ def fetch_pending_tender_by_id(tender_id):
     tu.login AS user_login,
     array_agg(tu2.id) AS supplier_id,
     array_agg(tu2.name) AS supplier_name,
+    array_agg(tu2.login) AS supplier_login,
     array_agg(tsup.price) AS supplier_prices,
     CASE WHEN COUNT(tsup.supplier_id) < 3 THEN NULL ELSE MIN(tsup.price) END AS supplier_price,
     tsup.is_winner AS is_winner
@@ -103,7 +104,7 @@ LEFT JOIN
 LEFT JOIN
     tender_system_user tu2 ON tsup.supplier_id = tu2.id AND tu2.user_type = 'supplier'
 WHERE
-    t.tender_status IN ('open', 'in progress') AND t.id = %s
+    t.tender_status IN ('open', 'in progress', 'closed') AND t.id = %s
 GROUP BY
     t.id, t.description, t.created_date_time, t.start_date_time, t.end_date_time, t.first_price, t.title, t.delivery_address, t.delivery_area, t.tender_status, tu.name, tu.login, tsup.is_winner;
             """
