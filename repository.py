@@ -23,7 +23,7 @@ def fetch_tenders_info():
 
     # SQL query to get all info about a tender
     query = """
-    SELECT
+    SELECT DISTINCT ON (t.id)
     t.id AS tender_id,
     t.description AS tender_description,
     t.created_date_time AS tender_created_date_time,
@@ -40,16 +40,16 @@ def fetch_tenders_info():
     tu2.name AS supplier_name,
     tsup.price AS supplier_price,
     tsup.is_winner AS is_winner
-FROM
+    FROM
     tender t
-LEFT JOIN
+    LEFT JOIN
     tender_system_user tu ON t.user_id = tu.id
-LEFT JOIN
+    LEFT JOIN
     tender_supplier tsup ON t.id = tsup.tender_id
-LEFT JOIN
+    LEFT JOIN
     tender_system_user tu2 ON tsup.supplier_id = tu2.id AND tu2.user_type = 'supplier'
+    ORDER BY t.id, tsup.is_winner DESC, tsup.price ASC
     """
-
 
     # Execute the query
     cur.execute(query, )
@@ -62,6 +62,7 @@ LEFT JOIN
     conn.close()
 
     return rows
+
 
 
 def fetch_pending_tender_by_id(tender_id):
