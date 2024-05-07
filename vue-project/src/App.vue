@@ -58,7 +58,7 @@
         </div>
       </div>
     </div>
-    <div class="noresult" v-else><strong>Ничего не найдено <i class="fa-solid fa-face-sad-tear"></i></strong></div>
+    <div class="noresult" v-else><strong v-if="searchQuery.length > 2">Ничего не найдено <i class="fa-solid fa-face-sad-tear"></i></strong></div>
   </div>
   <router-view v-else></router-view>
 </template>
@@ -71,12 +71,12 @@ export default {
     return {
       tenders: [],
       searchQuery: '',
-      userType: null
+      userType: null,
     }
   },
   methods: {
     async searchTenders() {
-      if (this.searchQuery.length < 1) {
+      if (this.searchQuery.length < 2) {
         this.tenders = [];
         return;
       }

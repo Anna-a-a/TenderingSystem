@@ -121,6 +121,10 @@ export default {
   margin-right: 10px;
 }
 
+.modal-buttons button:last-child {
+  margin-right: 0px;
+}
+
 .side-menu a {
   cursor: pointer;
 }

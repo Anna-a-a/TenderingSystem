@@ -263,13 +263,23 @@
 }
 
 .mybtn {
-    background-color: rgb(196, 245, 245);
+    /* background-color: rgb(196, 245, 245);
     padding: 5px 10px;
-    border-radius: 10px;
+    border-radius: 10px; */
+    /* flex-grow: 1; */
+  margin-right: 10px;
+  cursor: pointer;
+  color: black;
+  background-color: #c1d5f5;
+  border: none;
+  border-radius: 5px;
+  padding: 10px;
+  margin-top: 10px;
+  transition: background-color 0.3s ease;
 }
 
 .mybtn:hover {
-    background-color: #69e4e4;
+    background-color: #98baf0;
 }
 
 .tender-card-participants {
@@ -412,4 +422,3 @@
 
   
 
-  
