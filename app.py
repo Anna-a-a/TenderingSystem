@@ -168,6 +168,23 @@ def user_tenders(user_id: int, request: Request):
     return tender_dict
 
 
+@app.get("/supplier_tenders/{supplier_id}")
+def supplier_tenders(supplier_id: int, request: Request):
+    auth_cookie = request.cookies.get('auth')
+    if not is_cookie_exist(auth_cookie):
+        raise HTTPException(status_code=403, detail="you are not authorized :(")
+
+    tenders = get_supplier_tenders(supplier_id)  
+
+    tender_list = []
+    for tender in tenders:
+        tender_list.append(User_tender(tender[0], tender[1], tender[2], tender[3], tender[4],
+                                       tender[5], tender[6], tender[7], tender[8], tender[9],
+                                       tender[10]))
+
+    return tender_list
+
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8001)

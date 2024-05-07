@@ -459,3 +459,42 @@ def tenders_by_user_id(user_id):
     finally:
         cursor.close()
         conn.close()
+
+def get_supplier_tenders(supplier_id):
+    conn = psycopg2.connect(
+        dbname="tendering-system-db",
+        user="username",
+        password="password",
+        host="localhost",
+        port="5432"
+    )
+    cursor = conn.cursor()
+
+    # Define the select query
+    query = """SELECT
+    t.id AS tender_id,
+    t.description AS tender_description,
+    t.created_date_time AS tender_created_date_time,
+    t.start_date_time AS tender_start_date_time,
+    t.end_date_time AS tender_end_date_time,
+    t.first_price AS tender_first_price,
+    t.title AS tender_title,
+    t.delivery_address AS tender_delivery_address,
+    t.delivery_area AS tender_delivery_area,
+    t.tender_status AS tender_status_description,
+    tu.name AS tender_user_name
+FROM
+    tender t
+JOIN
+    tender_supplier ts ON t.id = ts.tender_id
+JOIN
+    tender_system_user tu ON t.user_id = tu.id
+WHERE
+    ts.supplier_id = %s"""
+    try:
+        cursor.execute(query, (supplier_id,))
+        result = cursor.fetchall()  # Use fetchall to get all matching records
+        return result
+    finally:
+        cursor.close()
+        conn.close()
