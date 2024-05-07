@@ -4,7 +4,7 @@ from models.tender import Tender
 from models.tender_info import TenderInfo
 from models.tender_suppliers import Tender_suppliers
 from repository import *
-from models.tender import Post_tender, User_tender
+from models.tender import Post_tender, User_tender, Tender_winner
 from models.user import Reg_user, Check_user, Info_user
 from models.supplier_response import Supplier_response
 import psycopg2
@@ -119,11 +119,6 @@ def registration(item: Reg_user):
     add_user(item, hashed_password)
 
 
-@app.post("/tender_supplier")
-async def tender_supplier(supplier_id, price):
-    return send_tender_supplier_info(supplier_id, price)
-
-
 @app.get("/user_info")
 async def user_info(request: Request):
     auth_cookie = request.cookies.get('auth')
@@ -131,17 +126,23 @@ async def user_info(request: Request):
         return None
 
     user_data = user_data_by_cookie(auth_cookie)
-    # Correctly initialize the Info_user model with keyword arguments
     user = Info_user(user_id=user_data[0], name=user_data[1], login=user_data[2], email=user_data[5], user_type=user_data[3])
     return user
 
 
 @app.post("/tender_winner")
-def tender_winner(name, request: Request):
+async def tender_winner(data: Tender_winner, request: Request):
     auth_cookie = request.cookies.get('auth')
     if not is_cookie_exist(auth_cookie):
         raise HTTPException(status_code=403, detail="you are not authorized :(")
-    return end_tender(name)
+
+    login = data.login
+    tender_id = data.tender_id
+
+    # Call the end_tender function with the login and tender_id
+    result = end_tender(login, tender_id)
+
+    return {"result": result}
 
 
 @app.post("/supplier_response")
@@ -174,7 +175,7 @@ def supplier_tenders(supplier_id: int, request: Request):
     if not is_cookie_exist(auth_cookie):
         raise HTTPException(status_code=403, detail="you are not authorized :(")
 
-    tenders = get_supplier_tenders(supplier_id)  
+    tenders = get_supplier_tenders(supplier_id)
 
     tender_list = []
     for tender in tenders:

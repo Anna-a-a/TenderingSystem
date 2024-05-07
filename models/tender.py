@@ -80,4 +80,9 @@ class User_tender:
         self.delivery_area = delivery_area
 
 
+class Tender_winner(BaseModel):
+    login: str
+    tender_id: int
+
+
 

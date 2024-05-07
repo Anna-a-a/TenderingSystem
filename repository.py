@@ -303,26 +303,31 @@ def is_cookie_user_exist(user_id):
 
 
 def is_cookie_exist(cookie):
-    conn = psycopg2.connect(
-        dbname="tendering-system-db",
-        user="username",
-        password="password",
-        host="localhost",
-        port="5432"
-    )
-    cursor = conn.cursor()
-
-    # Define the select query
-    query = """SELECT cookie FROM cookies WHERE cookie=%s"""
+    conn = None
     try:
+        conn = psycopg2.connect(
+            dbname="tendering-system-db",
+            user="username",
+            password="password",
+            host="localhost",
+            port="5432"
+        )
+        cursor = conn.cursor()
+
+        # Define the select query
+        query = """SELECT cookie FROM cookies WHERE cookie=%s"""
         cursor.execute(query, (cookie,))
         result = cursor.fetchone()
         if result is not None:
             return True
         return False
+    except psycopg2.Error as e:
+        print(f"Error: {e}")
+        return False
     finally:
-        cursor.close()
-        conn.close()
+        if conn is not None:
+            cursor.close()
+            conn.close()
 
 
 def user_id_by_cookie(auth_cookie):
@@ -372,7 +377,7 @@ def user_data_by_cookie(auth_cookie):
         conn.close()
 
 
-def end_tender(name):
+def end_tender(login, tender_id):
     conn = psycopg2.connect(
         dbname="tendering-system-db",
         user="username",
@@ -382,25 +387,46 @@ def end_tender(name):
     )
     cursor = conn.cursor()
 
-    # SQL query to update the tender table
-    update_query = """
-    UPDATE tender
-    SET end_date_time = NOW(),
-        user_id = (SELECT id FROM tender_system_user WHERE name = %s),
-        first_price = (SELECT price FROM tender_supplier WHERE supplier_id = (SELECT id FROM tender_system_user WHERE name = %s)),
-        tender_status = 'closed'
-    WHERE id = (SELECT tender_id FROM tender_supplier WHERE supplier_id = (SELECT id FROM tender_system_user WHERE name = %s));
+    # SQL query to check if the user has a bid on the specified tender
+    check_query = """
+    SELECT price FROM tender_supplier
+    WHERE tender_id = %s AND supplier_id = (SELECT id FROM tender_system_user WHERE login = %s);
     """
 
-    # Execute the query
-    cursor.execute(update_query, (name, name, name))
-    conn.commit()
+    # Execute the check query
+    cursor.execute(check_query, (tender_id, login))
+    result = cursor.fetchone()
+
+    # If the user has a bid on the tender, update the tender and tender_supplier tables
+    if result is not None:
+        proposed_price = result[0]
+
+        update_tender_query = """
+        UPDATE tender
+        SET end_date_time = NOW(),
+            first_price = %s,
+            tender_status = 'closed'
+        WHERE id = %s;
+        """
+
+        cursor.execute(update_tender_query, (proposed_price, tender_id))
+
+        update_supplier_query = """
+        UPDATE tender_supplier
+        SET is_winner = true,
+            price = %s
+        WHERE tender_id = %s AND supplier_id = (SELECT id FROM tender_system_user WHERE login = %s);
+        """
+
+        cursor.execute(update_supplier_query, (proposed_price, tender_id, login))
+
+        conn.commit()
+    else:
+        print(f"User with login '{login}' does not have a bid on tender with ID {tender_id}")
 
     # Close the cursor and connection
     cursor.close()
     conn.close()
-
-    return "Tender ended successfully"
 
 
 def add_supplier_for_tender(tender_id, price, supplier_login):
@@ -459,6 +485,7 @@ def tenders_by_user_id(user_id):
     finally:
         cursor.close()
         conn.close()
+
 
 def get_supplier_tenders(supplier_id):
     conn = psycopg2.connect(
