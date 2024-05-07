@@ -1,11 +1,6 @@
 <template>
+  <SideMenu/>
   <div class="container">
-    <div class="menu">
-      <router-link to="/profile">Личные данные</router-link>
-      <router-link to="/mytenders">Мои тендеры</router-link>
-      <router-link to="/myresponse">Ответы по заявкам</router-link>
-    </div>
-    <div style="margin-left: 300px; padding: 20px;">
       <h1>Личные данные</h1>
       <div id="data">
         <div class="data-form">
@@ -42,18 +37,18 @@
           </div>
         </div>
       </div>
-      <div>
-        <button class="mybtn" @click="removeCookies">Выйти</button>
-      </div>
-    </div>
   </div>
 </template>
 
 <script>
 import axios from 'axios';
 import Cookies from 'js-cookie';
+import SideMenu from './SideMenu.vue';
 
 export default {
+  components: {
+    SideMenu,
+  },
   data() {
     return {
       email: '',

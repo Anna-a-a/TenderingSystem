@@ -1,12 +1,16 @@
 <template>
+     <SideMenu/>
     <div class="container">
-        <div class="menu">
-            <router-link to="/profile">Личные данные</router-link>
-            <router-link to="/mytenders">Мои тендеры</router-link>
-            <router-link to="/myresponse">Ответы по заявкам</router-link>
-        </div>
-    <div style="margin-left: 300px; padding: 20px;">
-        <h1>Ответы по заявкам</h1>
-    </div>
+        <h1 style="text-align: center;">Ответы по заявкам</h1>
     </div>
 </template>
+
+<script>
+import SideMenu from './SideMenu.vue';
+
+export default {
+  components: {
+    SideMenu,
+  },
+}
+</script>

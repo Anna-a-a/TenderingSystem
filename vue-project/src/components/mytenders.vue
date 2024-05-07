@@ -1,12 +1,7 @@
 <template>
+  <SideMenu/>
   <div class="container">
-  <div class="menu">
-    <router-link to="/profile">Личные данные</router-link>
-    <router-link to="/mytenders">Мои тендеры</router-link>
-    <router-link to="/myresponse">Ответы по заявкам</router-link>
-  </div>
-  <div style="margin-left: 300px; padding: 20px;">
-      <h1>Мои тендеры</h1>
+      <h1 style="text-align: center;">Мои тендеры</h1>
       <div class="mycard" v-if="tenders.length > 0">
       <div class="mycard-head">
         <div class="mycard-col">
@@ -45,15 +40,18 @@
         </div>
       </div>
     </div>
-  </div>
   
   </div>
 </template>
 
 <script>
 import axios from 'axios'
+import SideMenu from './SideMenu.vue';
 
 export default {
+  components: {
+    SideMenu,
+  },
   data() {
     return {
       tenders: []
@@ -64,15 +62,16 @@ export default {
   },
   methods: {
     fetchTenders() {
-      axios.get('/tenders')
+      const id = 4;
+      axios.get(`/user_tenders/${id}`)
         .then(response => {
           for (let tender of response.data) {
             let id = tender.id
-            let date = new Date(tender.created_data_time).toLocaleDateString()
-            let time = new Date(tender.start_data_time).toLocaleTimeString();
+            let date = new Date(tender.created_date_time).toLocaleDateString()
+            let time = new Date(tender.start_date_time).toLocaleTimeString();
             let description = tender.description
-            let end_date = new Date(tender.end_data_time).toLocaleDateString()
-            let end_time = new Date(tender.end_data_time).toLocaleTimeString()
+            let end_date = new Date(tender.end_date_time).toLocaleDateString()
+            let end_time = new Date(tender.end_date_time).toLocaleTimeString()
             let delivery_area = tender.delivery_area
             let delivery_address = tender.delivery_address
             let first_price = tender.first_price

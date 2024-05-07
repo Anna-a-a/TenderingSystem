@@ -36,7 +36,7 @@ export default defineConfig({
         "ws": true,
         "changeOrigin": true
       },
-      "^/tenders_suppliers/{tender_id}": {
+      "^/tenders_suppliers/(.*)": {
         "target": API_URL,
         "ws": true,
         "changeOrigin": true
@@ -62,6 +62,16 @@ export default defineConfig({
         "changeOrigin": true
       },
       "^/supplier_response": {
+        "target": API_URL,
+        "ws": true,
+        "changeOrigin": true
+      },
+      "^/user_tenders/(.*)": {
+        "target": API_URL,
+        "ws": true,
+        "changeOrigin": true
+      },
+      "^/tender_winner": {
         "target": API_URL,
         "ws": true,
         "changeOrigin": true
