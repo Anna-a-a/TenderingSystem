@@ -220,7 +220,7 @@ async def update_name(item: UpdateNameRequest, request: Request):
         raise HTTPException(status_code=500, detail="Failed to update name")
 
 
-@app.post("/update_email/")
+@app.post("/update_email")
 async def update_email(item: UpdateEmailRequest, request: Request):
     auth_cookie = request.cookies.get('auth')
     if not is_cookie_exist(auth_cookie):
