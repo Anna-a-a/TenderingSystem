@@ -215,7 +215,7 @@ async def update_name(user_id: int, name: str, request: Request):
 
 
 @app.put("/update_email/{user_id}")
-async def update_name(user_id: int, email: str, request: Request):
+async def update_email(user_id: int, email: str, request: Request):
     auth_cookie = request.cookies.get('auth')
     if not is_cookie_exist(auth_cookie):
         raise HTTPException(status_code=403, detail="you are not authorized :(")
@@ -224,6 +224,8 @@ async def update_name(user_id: int, email: str, request: Request):
         return {"message": "Name updated successfully"}
     else:
         raise HTTPException(status_code=500, detail="Failed to update name")
+
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8001)
