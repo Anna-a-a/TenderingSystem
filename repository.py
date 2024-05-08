@@ -534,16 +534,16 @@ def get_supplier_tenders(supplier_id):
     # Define the select query
     query = """SELECT
     t.id AS tender_id,
+    t.tender_status AS tender_status_description,
     t.description AS tender_description,
     t.created_date_time AS tender_created_date_time,
     t.start_date_time AS tender_start_date_time,
     t.end_date_time AS tender_end_date_time,
+    tu.id AS tender_user_id,
     t.first_price AS tender_first_price,
     t.title AS tender_title,
     t.delivery_address AS tender_delivery_address,
-    t.delivery_area AS tender_delivery_area,
-    t.tender_status AS tender_status_description,
-    tu.name AS tender_user_name
+    t.delivery_area AS tender_delivery_area
 FROM
     tender t
 JOIN

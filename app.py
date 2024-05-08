@@ -176,7 +176,6 @@ def supplier_tenders(supplier_id: int, request: Request):
         raise HTTPException(status_code=403, detail="you are not authorized :(")
 
     tenders = get_supplier_tenders(supplier_id)
-
     tender_list = []
     for tender in tenders:
         tender_list.append(User_tender(tender[0], tender[1], tender[2], tender[3], tender[4],
