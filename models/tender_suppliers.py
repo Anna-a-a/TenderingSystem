@@ -1,7 +1,7 @@
 class Tender_suppliers:
     def __init__(self, id, description, created_date_time, start_date_time, end_date_time, first_price, title,
                  delivery_address, delivery_area, status_description, user_name, user_login, supplier_ids, supplier_names,
-                 supplier_logins, supplier_prices, supplier_price, is_winner):
+                 supplier_logins, supplier_emails, supplier_prices, supplier_price, is_winner):
         self.id = id
         self.description = description
         self.created_date_time = created_date_time
@@ -17,6 +17,7 @@ class Tender_suppliers:
         self.supplier_ids = supplier_ids
         self.supplier_names = supplier_names
         self.supplier_logins = supplier_logins
+        self.supplier_emails = supplier_emails
         self.supplier_prices = supplier_prices
         self.supplier_price = supplier_price
         self.is_winner = is_winner
@@ -38,6 +39,7 @@ class Tender_suppliers:
             'supplier_ids': self.supplier_ids,
             'supplier_names': self.supplier_names,
             'supplier_logins': self.supplier_logins,
+            'supplier_emails': self.supplier_emails,
             'supplier_prices': self.supplier_prices,
             'supplier_price': self.supplier_price,
             'is_winner': self.is_winner

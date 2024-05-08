@@ -75,72 +75,88 @@ def fetch_pending_tender_by_id(tender_id):
 
     cur = conn.cursor()
     query = """
-    WITH winner_check AS (
-    SELECT
-        t.id AS tender_id,
-        BOOL_OR(tsup.is_winner) AS has_winner
-    FROM
-        tender t
-    LEFT JOIN
-        tender_supplier tsup ON t.id = tsup.tender_id
-    WHERE
-        t.tender_status IN ('open', 'in progress', 'closed') AND t.id = %s
-    GROUP BY
-        t.id
+WITH winner_check AS (
+SELECT
+t.id AS tender_id,
+BOOL_OR(tsup.is_winner) AS has_winner
+FROM
+tender t
+LEFT JOIN
+tender_supplier tsup ON t.id = tsup.tender_id
+WHERE
+t.tender_status IN ('open', 'in progress', 'closed') AND t.id = 3
+GROUP BY
+t.id
 ),
 winner_supplier AS (
-    SELECT
-        t.id AS tender_id,
-        tu2.id AS supplier_id,
-        tu2.name AS supplier_name,
-        tu2.login AS supplier_login,
-        tsup.price AS supplier_price,
-        tsup.is_winner AS is_winner
-    FROM
-        tender t
-    JOIN
-        tender_supplier tsup ON t.id = tsup.tender_id AND tsup.is_winner = true
-    JOIN
-        tender_system_user tu2 ON tsup.supplier_id = tu2.id AND tu2.user_type = 'supplier'
-    WHERE
-        t.tender_status IN ('open', 'in progress', 'closed') AND t.id = %s
+SELECT
+t.id AS tender_id,
+tu2.id AS supplier_id,
+tu2.name AS supplier_name,
+tu2.login AS supplier_login,
+tu2.email AS supplier_email,
+tsup.price AS supplier_price,
+tsup.is_winner AS is_winner
+FROM
+tender t
+JOIN
+tender_supplier tsup ON t.id = tsup.tender_id AND tsup.is_winner = true
+JOIN
+tender_system_user tu2 ON tsup.supplier_id = tu2.id AND tu2.user_type = 'supplier'
+WHERE
+t.tender_status IN ('open', 'in progress', 'closed') AND t.id = 3
 )
 SELECT
-    t.id AS tender_id,
-    t.description AS tender_description,
-    t.created_date_time AS tender_created_date_time,
-    t.start_date_time AS tender_start_date_time,
-    t.end_date_time AS tender_end_date_time,
-    t.first_price AS tender_first_price,
-    t.title AS tender_title,
-    t.delivery_address AS tender_delivery_address,
-    t.delivery_area AS tender_delivery_area,
-    t.tender_status AS status_description,
-    tu.name AS user_name,
-    tu.login AS user_login,
-    CASE WHEN wc.has_winner THEN array_agg(ws.supplier_id) ELSE array_agg(tu2.id) END AS supplier_id,
-    CASE WHEN wc.has_winner THEN array_agg(ws.supplier_name) ELSE array_agg(tu2.name) END AS supplier_name,
-    CASE WHEN wc.has_winner THEN array_agg(ws.supplier_login) ELSE array_agg(tu2.login) END AS supplier_login,
-    CASE WHEN wc.has_winner THEN array_agg(ws.supplier_price) ELSE array_agg(tsup.price) END AS supplier_prices,
-    CASE WHEN COUNT(tsup.supplier_id) < 3 OR wc.has_winner THEN NULL ELSE MIN(tsup.price) END AS supplier_price,
-    CASE WHEN wc.has_winner THEN ws.is_winner ELSE tsup.is_winner END AS is_winner
+t.id AS tender_id,
+t.description AS tender_description,
+t.created_date_time AS tender_created_date_time,
+t.start_date_time AS tender_start_date_time,
+t.end_date_time AS tender_end_date_time,
+t.first_price AS tender_first_price,
+t.title AS tender_title,
+t.delivery_address AS tender_delivery_address,
+t.delivery_area AS tender_delivery_area,
+t.tender_status AS status_description,
+tu.name AS user_name,
+tu.login AS user_login,
+CASE
+WHEN wc.has_winner AND t.tender_status = 'closed' THEN ARRAY[ws.supplier_id]
+ELSE array_agg(DISTINCT tu2.id)
+END AS supplier_id,
+CASE
+WHEN wc.has_winner AND t.tender_status = 'closed' THEN ARRAY[ws.supplier_name]
+ELSE array_agg(DISTINCT tu2.name)
+END AS supplier_name,
+CASE
+WHEN wc.has_winner AND t.tender_status = 'closed' THEN ARRAY[ws.supplier_login]
+ELSE array_agg(DISTINCT tu2.login)
+END AS supplier_login,
+CASE
+WHEN wc.has_winner AND t.tender_status = 'closed' THEN ARRAY[ws.supplier_email]
+ELSE array_agg(DISTINCT tu2.email)
+END AS supplier_email,
+CASE
+WHEN wc.has_winner AND t.tender_status = 'closed' THEN ARRAY[ws.supplier_price]
+ELSE array_agg(DISTINCT tsup.price)
+END AS supplier_prices,
+CASE WHEN COUNT(tsup.supplier_id) < 3 OR wc.has_winner THEN NULL ELSE MIN(tsup.price) END AS supplier_price,
+CASE WHEN wc.has_winner THEN ws.is_winner ELSE tsup.is_winner END AS is_winner
 FROM
-    tender t
+tender t
 JOIN
-    winner_check wc ON t.id = wc.tender_id
+winner_check wc ON t.id = wc.tender_id
 JOIN
-    tender_system_user tu ON t.user_id = tu.id AND tu.user_type != 'supplier'
+tender_system_user tu ON t.user_id = tu.id AND tu.user_type != 'supplier'
 LEFT JOIN
-    tender_supplier tsup ON t.id = tsup.tender_id
+tender_supplier tsup ON t.id = tsup.tender_id
 LEFT JOIN
-    tender_system_user tu2 ON tsup.supplier_id = tu2.id AND tu2.user_type = 'supplier'
+tender_system_user tu2 ON tsup.supplier_id = tu2.id AND tu2.user_type = 'supplier'
 LEFT JOIN
-    winner_supplier ws ON t.id = ws.tender_id
+winner_supplier ws ON t.id = ws.tender_id
 WHERE
-    t.tender_status IN ('open', 'in progress', 'closed') AND t.id = %s
+t.tender_status IN ('open', 'in progress', 'closed') AND t.id = 3
 GROUP BY
-    t.id, t.description, t.created_date_time, t.start_date_time, t.end_date_time, t.first_price, t.title, t.delivery_address, t.delivery_area, t.tender_status, tu.name, tu.login, wc.has_winner, ws.is_winner, tsup.is_winner;
-"""
+t.id, t.description, t.created_date_time, t.start_date_time, t.end_date_time, t.first_price, t.title, t.delivery_address, t.delivery_area, t.tender_status, tu.name, tu.login, wc.has_winner, ws.supplier_id, ws.supplier_name, ws.supplier_login, ws.supplier_email, ws.supplier_price, ws.is_winner, tsup.is_winner;"""
 
     cur.execute(query, (tender_id, tender_id, tender_id, ))
     rows = cur.fetchall()

@@ -42,7 +42,7 @@ async def get_pending_tenders(tender_id: int, request: Request):
     # Assuming the new function is named fetch_pending_tender_by_id_new
     tenders = []
     for row in rows:
-        tender_id, tender_description, tender_created_date_time, tender_start_date_time, tender_end_date_time, tender_first_price, tender_title, tender_delivery_address, tender_delivery_area, status_description, user_name, user_login, supplier_ids, supplier_names, supplier_logins, supplier_prices, supplier_price, is_winner = row
+        tender_id, tender_description, tender_created_date_time, tender_start_date_time, tender_end_date_time, tender_first_price, tender_title, tender_delivery_address, tender_delivery_area, status_description, user_name, user_login, supplier_ids, supplier_names, supplier_logins,  supplier_emails, supplier_prices, supplier_price, is_winner = row
         tender = Tender_suppliers(
             id=tender_id,
             description=tender_description,
@@ -59,6 +59,7 @@ async def get_pending_tenders(tender_id: int, request: Request):
             supplier_ids=supplier_ids,
             supplier_names=supplier_names,
             supplier_logins=supplier_logins,
+            supplier_emails=supplier_emails,
             supplier_prices=supplier_prices,
             supplier_price=supplier_price,
             is_winner=is_winner
