@@ -202,6 +202,28 @@ async def responses_to_requests(supplier_id: int, request: Request):
     return tender_list
 
 
+@app.put("/update_name/{user_id}")
+async def update_name(user_id: int, name: str, request: Request):
+    auth_cookie = request.cookies.get('auth')
+    if not is_cookie_exist(auth_cookie):
+        raise HTTPException(status_code=403, detail="you are not authorized :(")
+
+    if update_user_name(user_id, name):
+        return {"message": "Name updated successfully"}
+    else:
+        raise HTTPException(status_code=500, detail="Failed to update name")
+
+
+@app.put("/update_emai/{user_id}")
+async def update_name(user_id: int, email: str, request: Request):
+    auth_cookie = request.cookies.get('auth')
+    if not is_cookie_exist(auth_cookie):
+        raise HTTPException(status_code=403, detail="you are not authorized :(")
+
+    if update_user_email(user_id, email):
+        return {"message": "Name updated successfully"}
+    else:
+        raise HTTPException(status_code=500, detail="Failed to update name")
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8001)

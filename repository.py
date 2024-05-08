@@ -8,6 +8,17 @@ app = FastAPI()
 from fastapi.encoders import jsonable_encoder
 
 
+def get_db_connection():
+    conn = psycopg2.connect(
+        dbname="tendering-system-db",
+        user="username",
+        password="password",
+        host="localhost",
+        port="5432"
+    )
+    return conn
+
+
 def fetch_tenders_info():
     # Database connection parameters
     conn = psycopg2.connect(
@@ -613,6 +624,52 @@ WHERE
         cursor.execute(query, (supplier_id,))
         result = cursor.fetchall()  # Use fetchall to get all matching records
         return result
+    finally:
+        cursor.close()
+        conn.close()
+
+
+def update_user_name(user_id: int, new_name: str):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    # Define the update query
+    query = """
+    UPDATE tender_system_user
+    SET name = %s
+    WHERE id = %s;
+    """
+
+    try:
+        cursor.execute(query, (new_name, user_id))
+        conn.commit()  # Commit the transaction to persist the changes
+        return True
+    except Exception as e:
+        print(f"Failed to update name: {str(e)}")
+        return False
+    finally:
+        cursor.close()
+        conn.close()
+
+
+def update_user_email(user_id: int, new_email: str):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    # Define the update query
+    query = """
+    UPDATE tender_system_user
+    SET email = %s
+    WHERE id = %s;
+    """
+
+    try:
+        cursor.execute(query, (new_email, user_id))
+        conn.commit()  # Commit the transaction to persist the changes
+        return True
+    except Exception as e:
+        print(f"Failed to update name: {str(e)}")
+        return False
     finally:
         cursor.close()
         conn.close()
