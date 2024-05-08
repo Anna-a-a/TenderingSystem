@@ -7,10 +7,13 @@ from repository import *
 from models.tender import Post_tender, User_tender, Tender_winner
 from models.user import Reg_user, Check_user, Info_user
 from models.supplier_response import Supplier_response
+from models.update import UpdateNameRequest, UpdateEmailRequest
 import psycopg2
 from password_hasher import *
 from fastapi.responses import JSONResponse
 import json
+from fastapi import FastAPI, HTTPException, Request
+from typing import Annotated
 
 app = FastAPI()
 
@@ -202,11 +205,14 @@ async def responses_to_requests(supplier_id: int, request: Request):
     return tender_list
 
 
-@app.put("/update_name/{user_id}")
-async def update_name(user_id: int, name: str, request: Request):
+@app.post("/update_name")
+async def update_name(item: UpdateNameRequest, request: Request):
     auth_cookie = request.cookies.get('auth')
     if not is_cookie_exist(auth_cookie):
         raise HTTPException(status_code=403, detail="you are not authorized :(")
+
+    user_id = item.user_id
+    name = item.name
 
     if update_user_name(user_id, name):
         return {"message": "Name updated successfully"}
@@ -214,14 +220,15 @@ async def update_name(user_id: int, name: str, request: Request):
         raise HTTPException(status_code=500, detail="Failed to update name")
 
 
-@app.put("/update_email/{user_id}")
-async def update_email(user_id: int, email: str, request: Request):
+@app.post("/update_email/")
+async def update_email(item: UpdateEmailRequest, request: Request):
     auth_cookie = request.cookies.get('auth')
     if not is_cookie_exist(auth_cookie):
         raise HTTPException(status_code=403, detail="you are not authorized :(")
-
+    user_id = item.user_id
+    email = item.email
     if update_user_email(user_id, email):
-        return {"message": "Name updated successfully"}
+        return {"message": "Email updated successfully"}
     else:
         raise HTTPException(status_code=500, detail="Failed to update name")
 
