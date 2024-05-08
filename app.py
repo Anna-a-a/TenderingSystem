@@ -214,7 +214,7 @@ async def update_name(user_id: int, name: str, request: Request):
         raise HTTPException(status_code=500, detail="Failed to update name")
 
 
-@app.put("/update_emai/{user_id}")
+@app.put("/update_email/{user_id}")
 async def update_name(user_id: int, email: str, request: Request):
     auth_cookie = request.cookies.get('auth')
     if not is_cookie_exist(auth_cookie):
