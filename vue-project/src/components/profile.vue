@@ -1,42 +1,42 @@
 <template>
-  <SideMenu/>
+  <SideMenu />
   <div class="container">
-      <h1>Личные данные</h1>
-      <div id="data">
-        <div class="data-form">
-          <div class="data-form-label">Логин:</div>
-          <div class="data-form-field">
-            <input type="text" v-model="login" :disabled="!editingLogin">
-          </div>
-          <div class="data-form-buttons">
-            <button @click="editLogin" v-if="!editingLogin" class="btn-edit"><i class="fa-solid fa-pen-to-square"></i></button>
-            <button @click="saveLogin" v-if="editingLogin" class="btn-edit green"><i class="fa-solid fa-check"></i></button>
-            <button @click="cancelEditLogin" v-if="editingLogin" class="btn-edit red"><i class="fa-solid fa-xmark"></i></button>
-          </div>
-        </div>
-        <div class="data-form">
-          <div class="data-form-label">Email:</div>
-          <div class="data-form-field">
-            <input type="email" v-model="email" :disabled="!editingEmail">
-          </div>
-          <div class="data-form-buttons">
-            <button @click="editEmail" v-if="!editingEmail" class="btn-edit"><i class="fa-solid fa-pen-to-square"></i></button>
-            <button @click="saveEmail" v-if="editingEmail" class="btn-edit green"><i class="fa-solid fa-check"></i></button>
-            <button @click="cancelEditEmail" v-if="editingEmail" class="btn-edit red"><i class="fa-solid fa-xmark"></i></button>
-          </div>
-        </div>
-        <div class="data-form">
-          <div class="data-form-label">ФИО:</div>
-          <div class="data-form-field">
-            <input type="text" v-model="name" :disabled="!editingName">
-          </div>
-          <div class="data-form-buttons">
-            <button @click="editName" v-if="!editingName" class="btn-edit"><i class="fa-solid fa-pen-to-square"></i></button>
-            <button @click="saveName" v-if="editingName" class="btn-edit green"><i class="fa-solid fa-check"></i></button>
-            <button @click="cancelEditName" v-if="editingName" class="btn-edit red"><i class="fa-solid fa-xmark"></i></button>
-          </div>
+    <h1>Личные данные</h1>
+    <div id="data">
+      <div class="data-form">
+        <div class="data-form-label">Логин:</div>
+        <div class="data-form-field">
+          <input type="text" v-model="login" disabled>
         </div>
       </div>
+      <div class="data-form">
+        <div class="data-form-label">Email:</div>
+        <div class="data-form-field">
+          <input type="email" v-model="email" :disabled="!editingEmail">
+        </div>
+        <div class="data-form-buttons">
+          <button @click="editEmail" v-if="!editingEmail" class="btn-edit"><i
+              class="fa-solid fa-pen-to-square"></i></button>
+          <button @click="saveEmail" v-if="editingEmail" class="btn-edit green"><i
+              class="fa-solid fa-check"></i></button>
+          <button @click="cancelEditEmail" v-if="editingEmail" class="btn-edit red"><i
+              class="fa-solid fa-xmark"></i></button>
+        </div>
+      </div>
+      <div class="data-form">
+        <div class="data-form-label">ФИО:</div>
+        <div class="data-form-field">
+          <input type="text" v-model="name" :disabled="!editingName">
+        </div>
+        <div class="data-form-buttons">
+          <button @click="editName" v-if="!editingName" class="btn-edit"><i
+              class="fa-solid fa-pen-to-square"></i></button>
+          <button @click="saveName" v-if="editingName" class="btn-edit green"><i class="fa-solid fa-check"></i></button>
+          <button @click="cancelEditName" v-if="editingName" class="btn-edit red"><i
+              class="fa-solid fa-xmark"></i></button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -56,55 +56,78 @@ export default {
       login: '',
       editingEmail: false,
       editingName: false,
-      editingLogin: false,
+      user_id: 0,
+      userType: null,
+      emailError: null,
+      previousEmail: '',
     }
   },
   async created() {
-    try {
-      const response = await axios.get('/user_info');
-      this.email = response.data.email;
-      this.name = response.data.name;
-      this.login = response.data.login;
-    } catch (error) {
-      console.error(error);
-    }
+    await this.getUserInfo();
   },
   methods: {
+    async getUserInfo() {
+      try {
+        const response = await axios.get('/user_info');
+        this.email = response.data.email;
+        this.name = response.data.name;
+        this.login = response.data.login;
+        this.user_id = response.data.user_id;
+        this.userType = response.data.user_type;
+        console.log(this.user_id);
+      } catch (error) {
+        console.error(error);
+      }
+    },
     removeCookies() {
       Cookies.remove('auth');
-      // location.reload();
       this.$router.push('/auth');
-      setTimeout(function() {
-      location.reload();
-    }, 20);
+      setTimeout(function () {
+        location.reload();
+      }, 20);
     },
     editEmail() {
+      this.previousEmail = this.email;
       this.editingEmail = true;
     },
-    saveEmail() {
+    async saveEmail() {
       this.editingEmail = false;
+      try {
+        const response = await axios.post(`/update_email`, {
+          user_id: this.user_id,
+          email: this.email
+        });
+        // здесь можно добавить обработку успешного ответа сервера, если нужно
+      } catch (error) {
+        if (error.response && error.response.status === 500) {
+          this.email = this.previousEmail;
+          alert('На эту почту уже зарегистрирован другой аккаунт');
+        } else {
+          console.error(error);
+        }
+      }
     },
+
     cancelEditEmail() {
       this.editingEmail = false;
     },
     editName() {
       this.editingName = true;
     },
-    saveName() {
+    async saveName() {
       this.editingName = false;
+      try {
+        await axios.post(`/update_name`, {
+          user_id: this.user_id,
+          name: this.name
+        });
+      } catch (error) {
+        console.error(error);
+      }
     },
     cancelEditName() {
       this.editingName = false;
     },
-    editLogin() {
-      this.editingLogin = true;
-    },
-    saveLogin() {
-      this.editingLogin = false;
-    },
-    cancelEditLogin() {
-      this.editingLogin = false;
-    }
   }
 }
 </script>

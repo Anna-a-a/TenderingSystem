@@ -29,6 +29,11 @@
             Место поставки
           </div>
         </div>
+        <div class="mycard-col" v-if="filterStatus.length === 0">
+          <div>
+            Статус
+          </div>
+        </div>
         <div class="mycard-col">
           <div>
             Цена
@@ -47,6 +52,11 @@
         <div class="mycard-col">
           <div class="mycard-col__content">
             {{ tender.delivery_area }}, {{ tender.delivery_address }}
+          </div>
+        </div>
+        <div class="mycard-col" v-if="filterStatus.length === 0">
+          <div class="mycard-col__content" :class="getStatusClass(tender.status)">
+            {{ getStatusName(tender.status) }} 
           </div>
         </div>
         <div class="mycard-col">
@@ -85,6 +95,24 @@ export default {
     }, 100);
   },
   methods: {
+    getStatusClass(status) {
+    if (status === 'in progress') {
+      return 'text-success';
+    } else if (status === 'closed') {
+      return 'text-danger';
+    }
+  },
+    getStatusName(status) {
+    if (status === 'open') {
+      return 'Открыт';
+    } else if (status === 'in progress') {
+      return 'В процессе';
+    } else if (status === 'closed') {
+      return 'Закрыт';
+    } else {
+      return status;
+    }
+  },
     updateFilterStatus(status) {
       if (this.filterStatus.includes(status)) {
         this.filterStatus = this.filterStatus.filter(item => item !== status);
@@ -131,6 +159,7 @@ export default {
                 delivery_address,
                 first_price,
                 title,
+                status,
               });
             } else if (tender.status == 'in progress') {
               this.in_progress_tenders.push({
@@ -144,6 +173,7 @@ export default {
                 delivery_address,
                 first_price,
                 title,
+                status,
               });
             } else {
               this.closed_tenders.push({
@@ -157,6 +187,7 @@ export default {
                 delivery_address,
                 first_price,
                 title,
+                status,
               });
             }
           }

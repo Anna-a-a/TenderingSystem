@@ -1,21 +1,29 @@
 <template>
-  <div class="side-menu">
-    <router-link to="/profile">Личные данные</router-link>
-    <router-link to="/mytenders">Мои тендеры</router-link>
-    <router-link to="/myresponse">Ответы по заявкам</router-link>
-    <a @click="showModal = true">Выйти из профиля</a>
+  <div class="side-menu-container">
+    <div class="button-container">
+    <button class="side-menu-button" @click="toggleSideMenu">
+      <i class="fa-solid fa-bars"></i>
+    </button>
+  </div>
+    <div class="side-menu" v-if="showSideMenu">
+      <router-link to="/">На главную</router-link>
+      <router-link to="/profile">Личные данные</router-link>
+      <router-link to="/mytenders">Мои тендеры</router-link>
+      <router-link to="/myresponse">Ответы по заявкам</router-link>
+      <a @click="showModal = true">Выйти из профиля</a>
 
-    <!-- Модальное окно -->
-    <div v-if="showModal" class="modal">
-      <div class="modal-content">
-        <p>Вы уверены, что хотите выйти из профиля?</p>
-        <div class="modal-buttons">
-          <button @click="removeCookies">Да</button>
-          <button @click="showModal = false">Нет</button>
+      <!-- Модальное окно -->
+      <div v-if="showModal" class="modal ">
+        <div class="modal-content">
+          <p>Вы уверены, что хотите выйти из профиля?</p>
+          <div class="modal-buttons">
+            <button @click="removeCookies">Да</button>
+            <button @click="showModal = false">Нет</button>
+          </div>
         </div>
       </div>
+      <!-- /Модальное окно -->
     </div>
-    <!-- /Модальное окно -->
   </div>
 </template>
 
@@ -25,10 +33,27 @@ import Cookies from 'js-cookie';
 export default {
   data() {
     return {
+      showSideMenu: false,
       showModal: false,
     };
   },
+  mounted() {
+    // Проверяем, сохранено ли состояние меню в localStorage
+    const sideMenuState = localStorage.getItem('sideMenuState');
+    if (sideMenuState !== null) {
+      this.showSideMenu = JSON.parse(sideMenuState);
+    }
+  },
+  watch: {
+    // Отслеживаем изменения showSideMenu и сохраняем их в localStorage
+    showSideMenu(newValue) {
+      localStorage.setItem('sideMenuState', JSON.stringify(newValue));
+    },
+  },
   methods: {
+    toggleSideMenu() {
+      this.showSideMenu = !this.showSideMenu;
+    },
     removeCookies() {
       Cookies.remove('auth');
       this.$router.push('/auth');
@@ -41,20 +66,54 @@ export default {
 </script>
 
 <style scoped>
+
+.side-menu-wrapper {
+  position: fixed; /* Добавляем новый родительский элемент с position: fixed */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 999;
+}
+
+.button-container {
+  margin-left: 25px; /* Отступ слева для кнопки */
+}
+
+.side-menu-container {
+  position: absolute;
+  margin-top: 14px;
+  /* margin-left: 25px; */
+  /* height: 66px; */
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  background-color: #343a40;
+}
+
+.side-menu-button {
+  outline: none;
+  background-color: transparent;
+  border: none;
+  color: #fff;
+  font-size: 25px;
+  /* padding: 10px; */
+  cursor: pointer;
+}
+
+.side-menu-button:hover {
+  color: #c1d5f5;
+}
+
 .side-menu {
-  position: fixed;
-  margin-left: 27px;
-  margin-top: 10px;
-  border-radius: 10px;
+  position: absolute;
+  left: 0;
   width: 230px;
   background-color: #343a40;
   color: #fff;
   padding: 20px 20px;
-}
-
-.side-menu ul {
-  list-style-type: none;
-  padding: 0;
+  transition: left 0.3s ease;
+  border-radius: 0px 0px 20px 0px;
 }
 
 .side-menu a {

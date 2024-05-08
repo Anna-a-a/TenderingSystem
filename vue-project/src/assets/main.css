@@ -420,5 +420,15 @@
     justify-content: space-between;
 }
 
-  
+.responseans {
+    background: #c1d5f5;
+    padding: 10px 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border-radius: 20px;
+    margin-bottom: 30px;
+    font-family: 'Helvetica Now Var', 'Verdana', sans-serif;
+    /* padding-bottom: 10px; */
+}
 

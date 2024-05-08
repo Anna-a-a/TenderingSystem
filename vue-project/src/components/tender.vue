@@ -10,20 +10,29 @@
         <p class="overflow-text"><i class="fa-regular fa-calendar"></i> {{ tender.date }} ({{ tender.time }}) - {{
       tender.end_date }} ({{ tender.end_time }})</p>
         <p class="overflow-text">Цена: {{ tender.first_price }} <i class="fa-solid fa-ruble-sign"></i></p>
+        <p class="overflow-text">
+          Статус: <span :class="{ 'text-success': status === 'в процессе', 'text-danger': status === 'закрыт' }">{{
+      status }}</span>
+        </p>
+
         <p class="overflow-text">{{ tender.description }}</p>
         <div v-if="userType == 'supplier'">
-          <button class="mybtn" @click="goToAnswerPage(tender.id)">Участвовать</button>
+          <button class="mybtn" @click="goToAnswerPage(tender.id)"
+            v-if="showWinnerButton && !this.is_winner && !this.tender_sup_id.includes(this.userId)">Участвовать</button>
         </div>
       </div>
-      <div class="tender-card-participants" v-if="userType == 'customer'">
-        <div class="tender-card-participants__head">Список участников</div>
+      <div class="tender-card-participants" v-if="login == this.tender.user_login">
+        <div class="tender-card-participants__head" v-if="!is_winner">Список участников</div>
+        <div class="tender-card-participants__head" v-else>Победитель</div>
         <div class="tender-card-participants__body" v-for="(participant, index) in tender.supplier_logins" :key="index">
           <div v-if="participant">
             <div class="tender-card-participants__body-info">Пользователь: {{ participant }}</div>
             <div class="tender-card-participants__body-info">Компания/ИП: {{ tender.supplier_names[index] }}</div>
+            <div class="tender-card-participants__body-info">Почта: {{ tender.supplier_emails[index] }}</div>
             <div class="tender-card-participants__body-info">Цена: {{ tender.supplier_prices[index] }} <i
                 class="fa-solid fa-ruble-sign"></i></div>
-            <button class="mybtn" @click="openModalForWinner(participant, tender.id)">Выбрать как победителя</button>
+            <button class="mybtn" @click="openModalForWinner(participant, tender.id)" v-if="!is_winner">Выбрать как
+              победителя</button>
           </div>
           <div v-else>
             <div class="tender-card-participants__body-info">Участников пока нет</div>
@@ -58,8 +67,13 @@ export default {
       tender: null,
       userType: null,
       login: '',
+      userId: null,
       showModal: false, // Добавлено состояние модального окна
       selectedWinner: null, // Добавлено состояние для выбранного победителя
+      is_winner: false,
+      tender_sup_id: [],
+      showWinnerButton: false,
+      status: '',
     }
   },
   created() {
@@ -68,6 +82,7 @@ export default {
     axios.get('/user_info')
       .then(response => {
         this.login = response.data.login;
+        this.userId = response.data.user_id;
       })
       .catch(error => {
         console.log(error.response.data);
@@ -90,17 +105,28 @@ export default {
       axios.get(url)
         .then(response => {
           this.tender = response.data;
-          console.log(this.tender);
           if (!this.tender) {
             this.tender = null;
           }
           else {
+            this.is_winner = this.tender.is_winner;
             this.tender.date = new Date(this.tender.created_date_time).toLocaleDateString();
             this.tender.time = new Date(this.tender.start_date_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
             this.tender.end_date = new Date(this.tender.end_date_time).toLocaleDateString();
             this.tender.end_time = new Date(this.tender.end_date_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
             this.tender.delivery_address = this.tender.delivery_address.charAt(0).toUpperCase() + this.tender.delivery_address.slice(1);
             this.tender.delivery_area = this.tender.delivery_area.charAt(0).toUpperCase() + this.tender.delivery_area.slice(1);
+            this.tender_sup_id = this.tender.supplier_ids;
+            if (this.tender.status_description == "open") {
+              this.status = "открыт"
+            }
+            else if (this.tender.status_description == "in progress") {
+              this.status = "в процессе"
+            }
+            else {
+              this.status = "закрыт"
+            }
+            console.log(this.is_winner);
           }
         })
         .catch(error => {
@@ -130,8 +156,8 @@ export default {
         .then(response => {
           console.log(response.data);
           setTimeout(() => {
-        location.reload(); // Обновляем страницу через 3 секунды
-      }, 30);
+            location.reload(); // Обновляем страницу через 3 секунды
+          }, 30);
           this.closeModal(); // Закрываем модальное окно после подтверждения
         })
         .catch(error => {
@@ -139,7 +165,15 @@ export default {
           this.closeModal(); // Закрываем модальное окно в случае ошибки
         });
     },
-  }
+  },
+  watch: {
+    tender() {
+      // отсрочка отображения кнопки на 3 секунды
+      setTimeout(() => {
+        this.showWinnerButton = true;
+      }, 50);
+    },
+  },
 }
 </script>
 
@@ -198,5 +232,4 @@ export default {
 .modal-buttons1 button:hover {
   background-color: #98baf0;
 }
-
 </style>

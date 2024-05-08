@@ -5,7 +5,11 @@
         <form @submit.prevent="onSubmit">
           <div class="mb-3">
             <label for="surname" class="form-label">ФИО</label>
-            <input type="text" class="form-control" id="surname" v-model="name" placeholder="Введите Ваши ФИО" />
+            <input type="text" class="form-control" id="surname" v-model="name" placeholder="Введите Ваши ФИО"
+              :class="{ 'is-invalid': submitted &&!name }" />
+            <div v-if="submitted &&!name" class="invalid-feedback">
+              Поле не может быть пустым!
+            </div>
           </div>
           <div class="mb-3">
             <label for="mail" class="form-label">Почта</label>
@@ -74,8 +78,8 @@ export default {
     validPasswordConfirmation() {
       return this.password === this.passwordConfirmation;
     },
-    validUsername() { // Добавлено для валидации логина
-      const usernameRegex = /^[a-zA-Z]+$/; // Регулярное выражение для проверки, что логин состоит только из английских букв
+    validUsername() {
+      const usernameRegex = /^[a-zA-Z]+$/;
       return usernameRegex.test(this.username);
     }
   },
@@ -83,7 +87,7 @@ export default {
     onSubmit() {
       this.submitted = true;
 
-      if (!this.validUsername || !this.validEmail || !this.validPassword || !this.validPasswordConfirmation) {
+      if (!this.validUsername ||!this.validEmail ||!this.validPassword ||!this.validPasswordConfirmation ||!this.name) {
         return;
       }
 
@@ -96,9 +100,7 @@ export default {
       };
 
       axios.post('/registration', formData)
-        .then(response => {
-          // console.log(response);
-          // Очистить форму после успешной отправки
+       .then(response => {
           this.name = '';
           this.username = '';
           this.password = '';
@@ -107,8 +109,7 @@ export default {
           this.submitted = false;
           this.$router.push('/auth');
         })
-
-        .catch(error => {
+       .catch(error => {
           console.log(error.response.data);
           console.log(error.response.status);
           console.log(error.response);

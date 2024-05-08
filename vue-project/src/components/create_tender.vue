@@ -15,8 +15,14 @@
           </div>
           <div class="mb-3">
             <label for="first_price" class="form-label">Цена</label>
-            <input v-model="first_price" type="text" class="form-control" id="first_price" placeholder="Введите цену">
+            <input v-model="first_price" type="text" class="form-control" id="first_price" placeholder="Введите цену"
+              :class="{ 'is-invalid': formSubmitted && !validPrice }">
+            <div v-if="formSubmitted && !validPrice" class="invalid-feedback">
+              Цена должна содержать только цифры
+            </div>
           </div>
+
+
           <div class="mb-3">
             <label for="delivery_area" class="form-label">Область поставки</label>
             <input v-model="delivery_area" type="text" class="form-control" id="delivery_area"
@@ -71,10 +77,22 @@ export default {
       delivery_address: '',
       userType: null,
       user_id: null,
+      formSubmitted: false,
     };
+  },
+  computed: {
+    validPrice() { // Добавлено для валидации цены
+      const priceRegex = /^\d+$/; // Регулярное выражение для проверки, что цена состоит только из цифр
+      return priceRegex.test(this.first_price);
+    }
   },
   methods: {
     submitForm() {
+      this.formSubmitted = true;
+      if (!this.validPrice) {
+        // Здесь можно добавить логику для отображения ошибки, если цена не проходит валидацию
+        return;
+      }
       const currentDate = new Date();
       const formattedDate = currentDate.toISOString().slice(0, 19).replace('T', ' ');
       const dateTimeStart = this.start_date + ' ' + this.start_time + ':00';

@@ -71,7 +71,27 @@ export default defineConfig({
         "ws": true,
         "changeOrigin": true
       },
+      "^/supplier_tenders/(.*)": {
+        "target": API_URL,
+        "ws": true,
+        "changeOrigin": true
+      },
       "^/tender_winner": {
+        "target": API_URL,
+        "ws": true,
+        "changeOrigin": true
+      },
+      "^/responses_to_requests/(.*)": {
+        "target": API_URL,
+        "ws": true,
+        "changeOrigin": true
+      },
+      "^/update_email": {
+        "target": API_URL,
+        "ws": true,
+        "changeOrigin": true
+      },
+      "^/update_name": {
         "target": API_URL,
         "ws": true,
         "changeOrigin": true
