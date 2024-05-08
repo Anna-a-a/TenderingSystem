@@ -84,7 +84,7 @@ tender t
 LEFT JOIN
 tender_supplier tsup ON t.id = tsup.tender_id
 WHERE
-t.tender_status IN ('open', 'in progress', 'closed') AND t.id = 3
+t.tender_status IN ('open', 'in progress', 'closed') AND t.id = %s
 GROUP BY
 t.id
 ),
@@ -104,7 +104,7 @@ tender_supplier tsup ON t.id = tsup.tender_id AND tsup.is_winner = true
 JOIN
 tender_system_user tu2 ON tsup.supplier_id = tu2.id AND tu2.user_type = 'supplier'
 WHERE
-t.tender_status IN ('open', 'in progress', 'closed') AND t.id = 3
+t.tender_status IN ('open', 'in progress', 'closed') AND t.id = %s
 )
 SELECT
 t.id AS tender_id,
@@ -154,7 +154,7 @@ tender_system_user tu2 ON tsup.supplier_id = tu2.id AND tu2.user_type = 'supplie
 LEFT JOIN
 winner_supplier ws ON t.id = ws.tender_id
 WHERE
-t.tender_status IN ('open', 'in progress', 'closed') AND t.id = 3
+t.tender_status IN ('open', 'in progress', 'closed') AND t.id = %s
 GROUP BY
 t.id, t.description, t.created_date_time, t.start_date_time, t.end_date_time, t.first_price, t.title, t.delivery_address, t.delivery_area, t.tender_status, tu.name, tu.login, wc.has_winner, ws.supplier_id, ws.supplier_name, ws.supplier_login, ws.supplier_email, ws.supplier_price, ws.is_winner, tsup.is_winner;"""
 
