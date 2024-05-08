@@ -8,6 +8,8 @@ from models.tender import Post_tender
 from models.user import Reg_user, Check_user, Info_user
 import psycopg2
 from password_hasher import *
+from datetime import datetime, timezone
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
 
 app = FastAPI()
@@ -132,8 +134,39 @@ def tender_winner(name, request: Request):
     return end_tender(name)
 
 
+def compare_times(time1_str, time2_str):
+    dt_obj1 = datetime.strptime(time1_str, "%Y-%m-%dT%H:%M:%S")
+    dt_obj2 = datetime.strptime(time2_str, "%Y-%m-%dT%H:%M:%S")
+
+    if time1_str < time2_str:
+        return 1
+    else:
+        return 0
+
+@app.post("/status_change")
+def change_tender_status(information=get_tenders_info):
+    utc_dt = datetime.now(timezone.utc)
+    iso_date = utc_dt.isoformat()
+
+    for i in information:
+        tender_endtime = i.get("end_data_time")
+        comp = compare_times(tender_endtime, iso_date)
+        if comp == 1:
+            update_tender_status(i.get("id"))
+
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8001)
+    scheduler = AsyncIOScheduler()
+    scheduler.start()
+    scheduler.add_job(change_tender_status, 'interval', minutes=5)
+
+
+
+
+
+
+
 
 

@@ -379,3 +379,30 @@ def end_tender(name):
     conn.close()
 
     return "Tender ended successfully"
+
+
+def update_tender_status(tender_id):
+    conn = psycopg2.connect(
+        dbname="tendering-system-db",
+        user="username",
+        password="password",
+        host="localhost",
+        port="5432"
+    )
+    cursor = conn.cursor()
+
+
+    update_query = f"""
+        UPDATE tender
+        SET tender_status = 'closed'
+        WHERE id = {tender_id};
+        """
+
+
+    cursor.execute(update_query)
+    conn.commit()
+
+
+    cursor.close()
+    conn.close()
+
