@@ -575,3 +575,44 @@ WHERE
     finally:
         cursor.close()
         conn.close()
+
+
+def get_responses_to_requests(supplier_id):
+    conn = psycopg2.connect(
+        dbname="tendering-system-db",
+        user="username",
+        password="password",
+        host="localhost",
+        port="5432"
+    )
+    cursor = conn.cursor()
+
+    # Define the select query
+    query = """SELECT
+    t.id AS tender_id,
+    t.tender_status AS tender_status_description,
+    t.description AS tender_description,
+    t.created_date_time AS tender_created_date_time,
+    t.start_date_time AS tender_start_date_time,
+    t.end_date_time AS tender_end_date_time,
+    tu.id AS tender_user_id,
+    t.first_price AS tender_first_price,
+    t.title AS tender_title,
+    t.delivery_address AS tender_delivery_address,
+    t.delivery_area AS tender_delivery_area
+FROM
+    tender t
+JOIN
+    tender_supplier ts ON t.id = ts.tender_id
+JOIN
+    tender_system_user tu ON t.user_id = tu.id
+WHERE
+    ts.supplier_id = %s AND
+    ts.is_winner = true"""
+    try:
+        cursor.execute(query, (supplier_id,))
+        result = cursor.fetchall()  # Use fetchall to get all matching records
+        return result
+    finally:
+        cursor.close()
+        conn.close()

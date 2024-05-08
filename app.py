@@ -147,7 +147,7 @@ async def tender_winner(data: Tender_winner, request: Request):
 
 
 @app.post("/supplier_response")
-def supplier_response(item: Supplier_response, request: Request):
+async def supplier_response(item: Supplier_response, request: Request):
     auth_cookie = request.cookies.get('auth')
     if not is_cookie_exist(auth_cookie):
         raise HTTPException(status_code=403, detail="you are not authorized :(")
@@ -156,7 +156,7 @@ def supplier_response(item: Supplier_response, request: Request):
 
 
 @app.get("/user_tenders/{user_id}")
-def user_tenders(user_id: int, request: Request):
+async def user_tenders(user_id: int, request: Request):
     auth_cookie = request.cookies.get('auth')
     if not is_cookie_exist(auth_cookie):
         raise HTTPException(status_code=403, detail="you are not authorized :(")
@@ -171,12 +171,28 @@ def user_tenders(user_id: int, request: Request):
 
 
 @app.get("/supplier_tenders/{supplier_id}")
-def supplier_tenders(supplier_id: int, request: Request):
+async def supplier_tenders(supplier_id: int, request: Request):
     auth_cookie = request.cookies.get('auth')
     if not is_cookie_exist(auth_cookie):
         raise HTTPException(status_code=403, detail="you are not authorized :(")
 
     tenders = get_supplier_tenders(supplier_id)
+    tender_list = []
+    for tender in tenders:
+        tender_list.append(User_tender(tender[0], tender[1], tender[2], tender[3], tender[4],
+                                       tender[5], tender[6], tender[7], tender[8], tender[9],
+                                       tender[10]))
+
+    return tender_list
+
+
+@app.get("/responses_to_requests/{supplier_id}")
+async def responses_to_requests(supplier_id: int, request: Request):
+    auth_cookie = request.cookies.get('auth')
+    if not is_cookie_exist(auth_cookie):
+        raise HTTPException(status_code=403, detail="you are not authorized :(")
+
+    tenders = get_responses_to_requests(supplier_id)
     tender_list = []
     for tender in tenders:
         tender_list.append(User_tender(tender[0], tender[1], tender[2], tender[3], tender[4],
