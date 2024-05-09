@@ -142,7 +142,7 @@ def convert_to_datetime(date_str):
 
 
 @app.on_event("startup")
-@repeat_every(seconds=120)
+@repeat_every(seconds=1800)
 @app.get("/closes_tenders")
 def update_status():
     info = f_for_change_stat()
