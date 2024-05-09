@@ -8,6 +8,8 @@ from models.tender import Post_tender
 from models.user import Reg_user, Check_user, Info_user
 import psycopg2
 from password_hasher import *
+from datetime import datetime
+from fastapi_utils.tasks import repeat_every
 
 
 app = FastAPI()
@@ -132,8 +134,52 @@ def tender_winner(name, request: Request):
     return end_tender(name)
 
 
+def convert_to_datetime(date_str):
+    text = str(date_str)
+    text = text.replace("T", " ")
+    return text
+
+
+
+@app.on_event("startup")
+@repeat_every(seconds=120)
+@app.get("/closes_tenders")
+def update_status():
+    info = f_for_change_stat()
+    for item in info:
+        tender_time = item.get("end_date_time")
+        tender_time = convert_to_datetime(tender_time)
+        date_format = '%Y-%m-%d %H:%M:%S'
+        date = datetime.strptime(tender_time, date_format)
+        tender_id = item.get("id")
+        now_utc = datetime.utcnow()
+        formatted_time = now_utc.strftime("%Y-%m-%d %H:%M:%S")
+
+
+        formatted_time_datetime = datetime.strptime(formatted_time, date_format)
+
+        if date < formatted_time_datetime:
+            update_tender_status(tender_id)
+
+
+
+
+
+
+
+
+
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8001)
+
+
+
+
+
+
+
+
 
 
