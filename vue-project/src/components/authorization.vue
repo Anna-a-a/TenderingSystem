@@ -19,6 +19,9 @@
               Пароль не может быть пустым
             </div>
           </div>
+          <div v-if="errorMessage" class="alert alert-danger" role="alert">
+            {{ errorMessage }}
+          </div>
           <button type="submit" class="btn btn-primary">Войти</button>
           &nbsp;
           <router-link to="/regist" class="btn btn-outline-primary" role="button">Зарегистрироваться</router-link>

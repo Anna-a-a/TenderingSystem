@@ -3,8 +3,8 @@
     <div class="container">
         <a class="navbar-brand" href="/">TenderingSystem</a>
         <form class="form-inline my-2 my-lg-0 d-flex justify-content-between w-100">
-            <input class="form-control flex-grow-1" type="search" placeholder="Поиск" aria-label="Search" v-model="searchQuery" @input="searchTenders">
-            <button class="btn btn-outline-info my-2 my-sm-0" type="submit" style="margin-left: 10px;" @click="clearSearch">Очистить поиск <i class="fa-solid fa-eraser"></i></button>
+            <input class="form-control flex-grow-1" type="search" placeholder="Поиск" aria-label="Search" v-model="searchQuery" @input="searchTenders" :disabled="!userType">
+            <button class="btn btn-outline-info my-2 my-sm-0" type="submit" style="margin-left: 10px;" @click="clearSearch" :disabled="!userType">Очистить поиск <i class="fa-solid fa-eraser"></i></button>
             <router-link to="/create" v-if="userType == 'customer'">
                 <button class="btn btn-outline-info my-2 my-sm-0 ml-2 btn-add"><i class="fa-solid fa-plus"></i></button>
             </router-link>
@@ -61,6 +61,11 @@
     <div class="noresult" v-else><strong v-if="searchQuery.length > 2">Ничего не найдено <i class="fa-solid fa-face-sad-tear"></i></strong></div>
   </div>
   <router-view v-else></router-view>
+  <button @click="scrollToTop" class="btn btn-outline-info btn-scroll-to-top" v-show="showScrollToTopButton">
+  <i class="fa-solid fa-arrow-up"></i>
+</button>
+
+
 </template>
 
 <script>
@@ -72,9 +77,19 @@ export default {
       tenders: [],
       searchQuery: '',
       userType: null,
+      showScrollToTopButton: false,
     }
   },
   methods: {
+    scrollToTop() {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  },
+    handleScroll() {
+    this.showScrollToTopButton = window.scrollY > 300;
+  },
     async searchTenders() {
       if (this.searchQuery.length < 2) {
         this.tenders = [];
@@ -134,8 +149,23 @@ export default {
     this.searchQuery = '';
   },
   },
+  mounted() {
+  window.addEventListener('scroll', this.handleScroll);
+},
+beforeDestroy() {
+  window.removeEventListener('scroll', this.handleScroll);
+},
   created() {
     this.getUserType();
   }
 }
 </script>
+
+<style>
+.btn-scroll-to-top {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 100;
+}
+</style>

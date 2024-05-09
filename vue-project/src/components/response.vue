@@ -23,12 +23,28 @@ export default {
         return {
             price: '',
             login: '',
+            tenderStatus: '',
         };
     },
     created() {
         axios.get('/user_info')
             .then(response => {
                 this.login = response.data.login;
+            })
+            .catch(error => {
+                console.log(error.response.data);
+                console.log(error.response.status);
+                console.log(error.response);
+            });
+
+        // Fetch tender status
+        axios.get(`/tenders_suppliers/${this.id}`)
+            .then(response => {
+                this.tenderStatus = response.data.status_description;
+                console.log(this.tenderStatus);
+                if (this.tenderStatus === 'closed' || this.tenderStatus === 'open') {
+                    this.$router.push('/forbidden');
+                }
             })
             .catch(error => {
                 console.log(error.response.data);

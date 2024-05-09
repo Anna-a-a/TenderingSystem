@@ -1,7 +1,7 @@
 <template>
   <SideMenu />
   <div class="container">
-    <h1>Личные данные</h1>
+    <h1 style="text-align: center;">Личные данные</h1>
     <div id="data">
       <div class="data-form">
         <div class="data-form-label">Логин:</div>
@@ -92,6 +92,14 @@ export default {
     },
     async saveEmail() {
       this.editingEmail = false;
+
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(this.email)) {
+      this.email = this.previousEmail;
+      alert('Введите корректный адрес электронной почты');
+      return;
+    }
+
       try {
         const response = await axios.post(`/update_email`, {
           user_id: this.user_id,

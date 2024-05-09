@@ -67,7 +67,8 @@
       </div>
     </div>
     <div class="noresult" v-if="filteredTenders.length == 0 && showNoAuthMessage && !userType"><strong>Вы не
-        авторизовались <i class="fa-solid fa-face-sad-tear"></i></strong></div>
+        авторизовались <i class="fa-solid fa-face-sad-tear"></i></strong>
+      </div>
   </div>
 </template>
 

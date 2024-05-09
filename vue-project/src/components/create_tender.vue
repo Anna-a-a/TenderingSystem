@@ -5,13 +5,19 @@
         <form @submit.prevent="submitForm">
           <div class="mb-3">
             <label for="title_app" class="form-label">Название</label>
-            <input v-model="title" type="text" class="form-control" id="title_app"
-              placeholder="Введите название заявки">
+            <input v-model="title" type="text" class="form-control" id="title_app" placeholder="Введите название заявки"
+              :class="{ 'is-invalid': formSubmitted && !title }">
+            <div v-if="formSubmitted && !title" class="invalid-feedback">
+              Поле не может быть пустым
+            </div>
           </div>
           <div class="mb-3">
             <label for="description">Описание</label>
-            <textarea v-model="description" class="form-control" id="description" placeholder="Введите текст"
-              rows="15"></textarea>
+            <textarea v-model="description" class="form-control" id="description" placeholder="Введите текст" rows="15"
+              :class="{ 'is-invalid': formSubmitted && !description }"></textarea>
+            <div v-if="formSubmitted && !description" class="invalid-feedback">
+              Поле не может быть пустым
+            </div>
           </div>
           <div class="mb-3">
             <label for="first_price" class="form-label">Цена</label>
@@ -21,17 +27,21 @@
               Цена должна содержать только цифры
             </div>
           </div>
-
-
           <div class="mb-3">
             <label for="delivery_area" class="form-label">Область поставки</label>
             <input v-model="delivery_area" type="text" class="form-control" id="delivery_area"
-              placeholder="Введите название области">
+              placeholder="Введите название области" :class="{ 'is-invalid': formSubmitted && !delivery_area }">
+            <div v-if="formSubmitted && !delivery_area" class="invalid-feedback">
+              Поле не может быть пустым
+            </div>
           </div>
           <div class="mb-3">
             <label for="delivery_address" class="form-label">Место поставки</label>
             <input v-model="delivery_address" type="text" class="form-control" id="delivery_address"
-              placeholder="Введите место поставки">
+              placeholder="Введите место поставки" :class="{ 'is-invalid': formSubmitted && !delivery_address }">
+            <div v-if="formSubmitted && !delivery_address" class="invalid-feedback">
+              Поле не может быть пустым
+            </div>
           </div>
           <div class="mb-3 d-flex justify-content-between">
             <div class="me-3">

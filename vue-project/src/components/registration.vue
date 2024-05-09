@@ -6,8 +6,8 @@
           <div class="mb-3">
             <label for="surname" class="form-label">ФИО</label>
             <input type="text" class="form-control" id="surname" v-model="name" placeholder="Введите Ваши ФИО"
-              :class="{ 'is-invalid': submitted &&!name }" />
-            <div v-if="submitted &&!name" class="invalid-feedback">
+              :class="{ 'is-invalid': submitted && !name }" />
+            <div v-if="submitted && !name" class="invalid-feedback">
               Поле не может быть пустым!
             </div>
           </div>
@@ -24,7 +24,7 @@
             <input type="text" class="form-control" id="login" v-model="username" placeholder="Введите логин"
               :class="{ 'is-invalid': submitted && !validUsername }" />
             <div v-if="submitted && !validUsername" class="invalid-feedback">
-              Логин должен содержать только латинские буквы
+              Логин должен содержать только латинские буквы или цифры
             </div>
           </div>
           <div class="mb-3">
@@ -42,6 +42,9 @@
             <div v-if="submitted && !validPasswordConfirmation" class="invalid-feedback">
               Пароли не совпадают
             </div>
+          </div>
+          <div v-if="errorMessage" class="alert alert-danger" role="alert">
+            {{ errorMessage }}
           </div>
           <button type="submit" class="btn btn-primary">Зарегистрироваться</button>
           &nbsp;
@@ -64,7 +67,8 @@ export default {
       password: '',
       passwordConfirmation: '',
       email: '',
-      submitted: false
+      submitted: false,
+      errorMessage: '',
     };
   },
   computed: {
@@ -79,7 +83,7 @@ export default {
       return this.password === this.passwordConfirmation;
     },
     validUsername() {
-      const usernameRegex = /^[a-zA-Z]+$/;
+      const usernameRegex = /^[a-zA-Z\d]+$/;
       return usernameRegex.test(this.username);
     }
   },
@@ -87,7 +91,7 @@ export default {
     onSubmit() {
       this.submitted = true;
 
-      if (!this.validUsername ||!this.validEmail ||!this.validPassword ||!this.validPasswordConfirmation ||!this.name) {
+      if (!this.validUsername || !this.validEmail || !this.validPassword || !this.validPasswordConfirmation || !this.name) {
         return;
       }
 
@@ -100,19 +104,39 @@ export default {
       };
 
       axios.post('/registration', formData)
-       .then(response => {
-          this.name = '';
-          this.username = '';
-          this.password = '';
-          this.passwordConfirmation = '';
-          this.email = '';
-          this.submitted = false;
-          this.$router.push('/auth');
+        .then(response => {
+          if (response.data === 'Login already exists') {
+            throw new Error('Login already exists');
+          }
+          else if (response.data === 'Email already exists') {
+            throw new Error('Email already exists');
+          }
+          else {
+            this.name = '';
+            this.username = '';
+            this.password = '';
+            this.passwordConfirmation = '';
+            this.email = '';
+            this.submitted = false;
+            this.$router.push('/auth');
+          }
         })
-       .catch(error => {
-          console.log(error.response.data);
-          console.log(error.response.status);
-          console.log(error.response);
+        .catch(error => {
+          if (error.message === 'Login already exists') {
+            this.loginExists = true;
+            this.submitted = true;
+            this.errorMessage = 'Этот логин уже занят.';
+          }
+          else if (error.message === 'Email already exists') {
+            this.EmailExists = true;
+            this.submitted = true;
+            this.errorMessage = 'На эту почты уже зарегистрирован другой аккаунт.';
+          }
+          else {
+            console.log(error.response.data);
+            console.log(error.response.status);
+            console.log(error.response);
+          }
         });
     }
   }

@@ -8,6 +8,7 @@ import myresponse from "./components/myresponse.vue";
 import authorization from "./components/authorization.vue";
 import registration from "./components/registration.vue";
 import tender from "./components/tender.vue";
+import forbidden from "./components/forbidden.vue";
 
 
 export default createRouter({
@@ -15,7 +16,7 @@ export default createRouter({
     routes: [
         { path: '/', component: main_page, alias: '/' },
         { path: '/create', component: create_tender },
-        // { path: '/send', component: response },
+        { path: '/forbidden', component: forbidden },
         { path: '/profile', component: profile },
         { path: '/mytenders', component: mytenders },
         { path: '/myresponse', component: myresponse },

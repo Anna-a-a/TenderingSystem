@@ -18,7 +18,7 @@
         <p class="overflow-text">{{ tender.description }}</p>
         <div v-if="userType == 'supplier'">
           <button class="mybtn" @click="goToAnswerPage(tender.id)"
-            v-if="showWinnerButton && !this.is_winner && !this.tender_sup_id.includes(this.userId)">Участвовать</button>
+            v-if="showWinnerButton && !this.is_winner && !this.tender_sup_id.includes(this.userId) && status != 'открыт'">Участвовать</button>
         </div>
       </div>
       <div class="tender-card-participants" v-if="login == this.tender.user_login">

@@ -23,6 +23,10 @@
     background-color: #c1d5f5;
 }
 
+.round:focus {
+    outline: none;
+}
+
 .fa-user {
     /*Иконка юзера*/
     color: rgb(0, 0, 0);
@@ -58,10 +62,12 @@
 
 #data {
     border-radius: 10px;
-    background-color: #f5f7f6;
+    background-color: #c1d5f5;
     display: inline-block;
+    margin-left: 340px;
     min-width: 300px;
     padding: 10px;
+    margin-top: 20px;
     margin-bottom: 20px;
 }
 
@@ -432,3 +438,30 @@
     /* padding-bottom: 10px; */
 }
 
+.btn-outline-info[disabled]:hover {
+  background: #e9e3e3 !important;
+}
+
+.no-info {
+    font-size: 25px;
+    text-align: center;
+    margin-top: 20px;
+}
+
+
+.btn-primary {
+    background: #c1d5f5 !important;
+    color: black !important;
+}
+
+.btn-primary:hover {
+    background: #98baf0 !important;
+}
+
+.btn-outline-primary {
+    color: black !important;
+}
+
+.btn-outline-primary:hover {
+    background: #98baf0 !important;
+}

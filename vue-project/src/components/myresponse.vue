@@ -9,7 +9,7 @@
         </p>
       </div>
       <p v-else-if="user_id === 0 && !loading">Загрузка данных...</p>
-      <p v-else-if="!loading">Нет данных</p>
+      <p class="no-info" v-else-if="!loading">Нет данных</p>
     </div>
   </div>
 </template>

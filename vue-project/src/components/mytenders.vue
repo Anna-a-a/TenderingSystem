@@ -40,7 +40,14 @@
         </div>
       </div>
     </div>
-
+    <div class="no-info" v-else>
+      <div v-if="userType=='customer'">
+      Вы еще не создали ни одного тендера
+      </div>
+      <div v-if="userType=='supplier'">
+        Вы еще не участвовали в тендерах
+      </div>
+    </div>
   </div>
 </template>
 
