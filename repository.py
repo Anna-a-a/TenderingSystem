@@ -406,6 +406,31 @@ def update_tender_status(tender_id):
     cursor.close()
     conn.close()
 
+def update_tender_status_inprogress(tender_id):
+    conn = psycopg2.connect(
+        dbname="tendering-system-db",
+        user="username",
+        password="password",
+        host="localhost",
+        port="5432"
+    )
+    cursor = conn.cursor()
+
+
+    update_query = f"""
+        UPDATE tender
+        SET tender_status = 'in progress'
+        WHERE id = {tender_id};
+        """
+
+
+    cursor.execute(update_query)
+    conn.commit()
+
+
+    cursor.close()
+    conn.close()
+
 def f_for_change_stat():
     # Database connection parameters
     conn = psycopg2.connect(
@@ -419,17 +444,18 @@ def f_for_change_stat():
     # Create a cursor object
     cur = conn.cursor()
 
-    # SQL query to get all info about a tender
+    # SQL query to get all info about a tender including start_date_time
     query = """
     SELECT
     t.id AS tender_id,
+    t.start_date_time AS tender_start_date_time,
     t.end_date_time AS tender_end_date_time
     FROM
     tender t
     """
 
     # Execute the query
-    cur.execute(query, )
+    cur.execute(query)
 
     # Fetch all the rows
     rows = cur.fetchall()
@@ -437,7 +463,7 @@ def f_for_change_stat():
     # Convert the rows to a list of dictionaries
     tenders_info = []
     for row in rows:
-        tender_info = {"id": row[0], "end_date_time": row[1]}
+        tender_info = {"id": row[0], "start_date_time": row[1], "end_date_time": row[2]}
         tenders_info.append(tender_info)
 
     # Close the cursor and connection

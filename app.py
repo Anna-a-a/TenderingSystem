@@ -151,6 +151,8 @@ def update_status():
         tender_time = convert_to_datetime(tender_time)
         date_format = '%Y-%m-%d %H:%M:%S'
         date = datetime.strptime(tender_time, date_format)
+        start_time = item.get("start_date_time")
+        start = datetime.strptime(start_time, date_format)
         tender_id = item.get("id")
         now_utc = datetime.utcnow()
         formatted_time = now_utc.strftime("%Y-%m-%d %H:%M:%S")
@@ -158,13 +160,10 @@ def update_status():
 
         formatted_time_datetime = datetime.strptime(formatted_time, date_format)
 
+        if start < formatted_time_datetime < date:
+            update_tender_status_inprogress(tender_id)
         if date < formatted_time_datetime:
             update_tender_status(tender_id)
-
-
-
-
-
 
 
 
