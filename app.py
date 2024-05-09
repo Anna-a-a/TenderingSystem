@@ -120,7 +120,7 @@ async def login(item: Check_user, response: Response):
 @app.post("/registration")
 def registration(item: Reg_user):
     hashed_password = hash_password(item.password)
-    add_user(item, hashed_password)
+    return add_user(item, hashed_password)
 
 
 @app.get("/user_info")

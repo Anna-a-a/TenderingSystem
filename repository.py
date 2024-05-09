@@ -234,7 +234,7 @@ def send_tender_supplier_info(supplier_id, price):
         return 0
 
 
-def add_user(user, hashed_password) :
+def add_user(user, hashed_password):
     # Connect to the database
     conn = psycopg2.connect(
         dbname="tendering-system-db",
@@ -244,6 +244,24 @@ def add_user(user, hashed_password) :
         port="5432"
     )
     cursor = conn.cursor()
+
+    # Check if login already exists
+    query = """
+            SELECT COUNT(*) FROM tender_system_user WHERE login = %s;
+            """
+    cursor.execute(query, (user.login,))
+    login_count = cursor.fetchone()[0]
+    if login_count > 0:
+        return "Login already exists"
+
+    # Check if email already exists
+    query = """
+            SELECT COUNT(*) FROM tender_system_user WHERE email = %s;
+            """
+    cursor.execute(query, (user.email,))
+    email_count = cursor.fetchone()[0]
+    if email_count > 0:
+        return "Email already exists"
 
     # Define the insert query
     query = """
@@ -262,6 +280,7 @@ def add_user(user, hashed_password) :
     finally:
         cursor.close()
         conn.close()
+
 
 
 def user_id_by_login(login, password_hash):
