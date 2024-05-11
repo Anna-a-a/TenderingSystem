@@ -57,8 +57,6 @@ class Post_tender(BaseModel):
     delivery_area: str
 
 
-
-
 class User_tender:
     def __init__(self, id, tender_status, description, created_date_time, start_date_time, end_date_time, user_id,
                  first_price, title, delivery_address, delivery_area):

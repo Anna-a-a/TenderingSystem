@@ -282,7 +282,6 @@ def add_user(user, hashed_password):
         conn.close()
 
 
-
 def user_id_by_login(login, password_hash):
     conn = psycopg2.connect(
         dbname="tendering-system-db",
@@ -692,3 +691,67 @@ def update_user_email(user_id: int, new_email: str):
     finally:
         cursor.close()
         conn.close()
+
+
+def update_tender_status(tender_id):
+    conn = psycopg2.connect(
+        dbname="tendering-system-db",
+        user="username",
+        password="password",
+        host="localhost",
+        port="5432"
+    )
+    cursor = conn.cursor()
+
+    update_query = f"""
+        UPDATE tender
+        SET tender_status = 'closed'
+        WHERE id = {tender_id};
+        """
+
+    cursor.execute(update_query)
+    conn.commit()
+
+    cursor.close()
+    conn.close()
+
+
+def f_for_change_stat():
+    # Database connection parameters
+    conn = psycopg2.connect(
+        dbname="tendering-system-db",
+        user="username",
+        password="password",
+        host="localhost", # Or "127.0.0.1"
+        port="5432"
+    )
+
+    # Create a cursor object
+    cur = conn.cursor()
+
+    # SQL query to get all info about a tender
+    query = """
+    SELECT
+    t.id AS tender_id,
+    t.end_date_time AS tender_end_date_time
+    FROM
+    tender t
+    """
+
+    # Execute the query
+    cur.execute(query, )
+
+    # Fetch all the rows
+    rows = cur.fetchall()
+
+    # Convert the rows to a list of dictionaries
+    tenders_info = []
+    for row in rows:
+        tender_info = {"id": row[0], "end_date_time": row[1]}
+        tenders_info.append(tender_info)
+
+    # Close the cursor and connection
+    cur.close()
+    conn.close()
+
+    return tenders_info

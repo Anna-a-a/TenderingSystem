@@ -1,4 +1,7 @@
+from datetime import datetime
 import uuid
+
+from apscheduler.util import convert_to_datetime
 from fastapi import FastAPI, Response, HTTPException, Request, Cookie
 from models.tender import Tender
 from models.tender_info import TenderInfo
@@ -10,12 +13,16 @@ from models.supplier_response import Supplier_response
 from models.update import UpdateNameRequest, UpdateEmailRequest
 import psycopg2
 from password_hasher import *
-from fastapi.responses import JSONResponse
-import json
 from fastapi import FastAPI, HTTPException, Request
-from typing import Annotated
+from apscheduler.schedulers.background import BackgroundScheduler
+from apscheduler.triggers.interval import IntervalTrigger
+
 
 app = FastAPI()
+
+
+scheduler = BackgroundScheduler()
+scheduler.start()
 
 
 @app.get("/tenders")
@@ -231,6 +238,29 @@ async def update_email(item: UpdateEmailRequest, request: Request):
         return {"message": "Email updated successfully"}
     else:
         raise HTTPException(status_code=500, detail="Failed to update name")
+
+
+@app.on_event("startup")
+def schedule_update_status():
+    scheduler.add_job(update_status, trigger=IntervalTrigger(seconds=1800))
+
+
+@app.get("/closes_tenders")
+def update_status():
+    info = f_for_change_stat()
+    for item in info:
+        tender_time = item.get("end_date_time")
+        tender_time = convert_to_datetime(tender_time)
+        date_format = '%Y-%m-%d %H:%M:%S'
+        date = datetime.strptime(tender_time, date_format)
+        tender_id = item.get("id")
+        now_utc = datetime.utcnow()
+        formatted_time = now_utc.strftime("%Y-%m-%d %H:%M:%S")
+
+        formatted_time_datetime = datetime.strptime(formatted_time, date_format)
+
+        if date < formatted_time_datetime:
+            update_tender_status(tender_id)
 
 
 if __name__ == "__main__":
