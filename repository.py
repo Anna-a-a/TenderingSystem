@@ -1,3 +1,5 @@
+import datetime
+
 from fastapi import FastAPI
 import psycopg2
 from psycopg2 import sql
@@ -21,13 +23,7 @@ def get_db_connection():
 
 def fetch_tenders_info():
     # Database connection parameters
-    conn = psycopg2.connect(
-        dbname="tendering-system-db",
-        user="username",
-        password="password",
-        host="localhost", # Or "127.0.0.1"
-        port="5432"
-    )
+    conn = get_db_connection()
 
     # Create a cursor object
     cur = conn.cursor()
@@ -76,13 +72,7 @@ def fetch_tenders_info():
 
 
 def fetch_pending_tender_by_id(tender_id):
-    conn = psycopg2.connect(
-        dbname="tendering-system-db",
-        user="username",
-        password="password",
-        host="localhost",
-        port="5432"
-    )
+    conn = get_db_connection()
 
     cur = conn.cursor()
     query = """
@@ -177,13 +167,7 @@ t.id, t.description, t.created_date_time, t.start_date_time, t.end_date_time, t.
 
 
 def is_user_exist(user):
-    conn = psycopg2.connect(
-        dbname="tendering-system-db",
-        user="username",
-        password="password",
-        host="localhost",
-        port="5432"
-    )
+    conn = get_db_connection()
     cursor = conn.cursor()
 
     # Define the select query
@@ -200,13 +184,7 @@ def is_user_exist(user):
 
 
 def send_tender_supplier_info(supplier_id, price):
-    conn = psycopg2.connect(
-        dbname="tendering-system-db",
-        user="username",
-        password="password",
-        host="localhost",  # Или "127.0.0.1"
-        port="5432"
-    )
+    conn = get_db_connection()
 
     # Создание объекта курсора
     cur = conn.cursor()
@@ -236,13 +214,7 @@ def send_tender_supplier_info(supplier_id, price):
 
 def add_user(user, hashed_password):
     # Connect to the database
-    conn = psycopg2.connect(
-        dbname="tendering-system-db",
-        user="username",
-        password="password",
-        host="localhost",
-        port="5432"
-    )
+    conn = get_db_connection()
     cursor = conn.cursor()
 
     # Check if login already exists
@@ -283,13 +255,7 @@ def add_user(user, hashed_password):
 
 
 def user_id_by_login(login, password_hash):
-    conn = psycopg2.connect(
-        dbname="tendering-system-db",
-        user="username",
-        password="password",
-        host="localhost",
-        port="5432"
-    )
+    conn = get_db_connection()
     cursor = conn.cursor()
 
     query = """SELECT id, user_type FROM tender_system_user WHERE login=%s and password_hash=%s"""
@@ -308,13 +274,7 @@ def insert_cookie(user_id, cookie):
     if is_cookie_user_exist(user_id):
         return True
     # Connect to the database
-    conn = psycopg2.connect(
-        dbname="tendering-system-db",
-        user="username",
-        password="password",
-        host="localhost",
-        port="5432"
-    )
+    conn = get_db_connection()
     cursor = conn.cursor()
 
     # Define the insert query
@@ -337,13 +297,7 @@ def insert_cookie(user_id, cookie):
 
 
 def supplier_id_by_login(login):
-    conn = psycopg2.connect(
-        dbname="tendering-system-db",
-        user="username",
-        password="password",
-        host="localhost",
-        port="5432"
-    )
+    conn = get_db_connection()
     cursor = conn.cursor()
 
     query = """SELECT id FROM tender_system_user WHERE login=%s"""
@@ -359,13 +313,7 @@ def supplier_id_by_login(login):
 
 
 def is_cookie_user_exist(user_id):
-    conn = psycopg2.connect(
-        dbname="tendering-system-db",
-        user="username",
-        password="password",
-        host="localhost",
-        port="5432"
-    )
+    conn = get_db_connection()
     cursor = conn.cursor()
 
     # Define the select query
@@ -384,13 +332,7 @@ def is_cookie_user_exist(user_id):
 def is_cookie_exist(cookie):
     conn = None
     try:
-        conn = psycopg2.connect(
-            dbname="tendering-system-db",
-            user="username",
-            password="password",
-            host="localhost",
-            port="5432"
-        )
+        conn = get_db_connection()
         cursor = conn.cursor()
 
         # Define the select query
@@ -693,65 +635,42 @@ def update_user_email(user_id: int, new_email: str):
         conn.close()
 
 
-def update_tender_status(tender_id):
-    conn = psycopg2.connect(
-        dbname="tendering-system-db",
-        user="username",
-        password="password",
-        host="localhost",
-        port="5432"
-    )
+def update_tender_status():
+    # Подключение к базе данных
+    conn = get_db_connection()
     cursor = conn.cursor()
 
-    update_query = f"""
-        UPDATE tender
-        SET tender_status = 'closed'
-        WHERE id = {tender_id};
-        """
+    # Получение текущего времени
+    now = datetime.datetime.now()
 
-    cursor.execute(update_query)
+    # Получение всех тендеров из базы данных
+    cursor.execute("SELECT id, start_date_time, end_date_time, tender_status FROM tender")
+    tenders = cursor.fetchall()
+
+    # Обновление статуса каждого тендера
+    for tender in tenders:
+        tender_id = tender[0]
+        start_time = tender[1]
+        end_time = tender[2]
+        current_status = tender[3]
+
+        # Если тендер еще не начался, то статус остается "created"
+        if now < start_time:
+            new_status = "open"
+
+        # Если тендер уже начался, но еще не закончился, то статус меняется на "in_progress"
+        elif start_time <= now < end_time:
+            new_status = "in progress"
+
+        # Если тендер уже закончился, то статус меняется на "closed"
+        else:
+            new_status = "closed"
+
+        # Если статус изменился, то обновляем его в базе данных
+        if new_status != current_status:
+            cursor.execute("UPDATE tender SET tender_status = %s WHERE id = %s", (new_status, tender_id))
+
+    # Завершение транзакции и закрытие подключения к базе данных
     conn.commit()
-
     cursor.close()
     conn.close()
-
-
-def f_for_change_stat():
-    # Database connection parameters
-    conn = psycopg2.connect(
-        dbname="tendering-system-db",
-        user="username",
-        password="password",
-        host="localhost", # Or "127.0.0.1"
-        port="5432"
-    )
-
-    # Create a cursor object
-    cur = conn.cursor()
-
-    # SQL query to get all info about a tender
-    query = """
-    SELECT
-    t.id AS tender_id,
-    t.end_date_time AS tender_end_date_time
-    FROM
-    tender t
-    """
-
-    # Execute the query
-    cur.execute(query, )
-
-    # Fetch all the rows
-    rows = cur.fetchall()
-
-    # Convert the rows to a list of dictionaries
-    tenders_info = []
-    for row in rows:
-        tender_info = {"id": row[0], "end_date_time": row[1]}
-        tenders_info.append(tender_info)
-
-    # Close the cursor and connection
-    cur.close()
-    conn.close()
-
-    return tenders_info

@@ -1,10 +1,4 @@
-from datetime import datetime
-import uuid
-
-from apscheduler.util import convert_to_datetime
-from fastapi import FastAPI, Response, HTTPException, Request, Cookie
 from models.tender import Tender
-from models.tender_info import TenderInfo
 from models.tender_suppliers import Tender_suppliers
 from repository import *
 from models.tender import Post_tender, User_tender, Tender_winner
@@ -15,14 +9,17 @@ import psycopg2
 from password_hasher import *
 from fastapi import FastAPI, HTTPException, Request
 from apscheduler.schedulers.background import BackgroundScheduler
-from apscheduler.triggers.interval import IntervalTrigger
 
 
 app = FastAPI()
-
-
 scheduler = BackgroundScheduler()
+scheduler.add_job(update_tender_status, "interval", minutes=10)
 scheduler.start()
+
+
+@app.get("/update_tender_status")
+def status_update():
+    update_tender_status()
 
 
 @app.get("/tenders")
@@ -81,13 +78,7 @@ async def get_pending_tenders(tender_id: int, request: Request):
 
 @app.post("/send_tender_info")
 def insert_tender_info(item: Post_tender):
-    conn = psycopg2.connect(
-        dbname="tendering-system-db",
-        user="username",
-        password="password",
-        host="localhost",
-        port="5432"
-    )
+    conn = get_db_connection()
     cursor = conn.cursor()
     query = """
             INSERT INTO tender(tender_status, description, start_date_time, user_id, created_date_time, end_date_time, 
@@ -97,6 +88,7 @@ VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
     try:
         cursor.execute(query, (item.tender_status, item.description, item.start_date_time, item.user_id, item.created_date_time, item.end_date_time, item.first_price, item.title, item.delivery_address, item.delivery_area))
         conn.commit()
+        update_tender_status()
         return True
     except psycopg2.OperationalError as e:
         print(f"The error '{e}' occurred")
@@ -113,9 +105,11 @@ async def login(item: Check_user, response: Response):
         response.set_cookie(key="auth", value=hash)
         user = user_id_by_login(item.login, hash)
         if user:
+            now = datetime.datetime.now()
+            cookie = hash + now
             user_id = user[0]
             usertype = user[1]
-            insert_cookie(user_id, hash)
+            insert_cookie(user_id, cookie)
             return {"message": "Успешная авторизация",
                     "user_type": f"{usertype}"}
         else:
@@ -240,31 +234,8 @@ async def update_email(item: UpdateEmailRequest, request: Request):
         raise HTTPException(status_code=500, detail="Failed to update name")
 
 
-@app.on_event("startup")
-def schedule_update_status():
-    scheduler.add_job(update_status, trigger=IntervalTrigger(seconds=1800))
-
-
-@app.get("/closes_tenders")
-def update_status():
-    info = f_for_change_stat()
-    for item in info:
-        tender_time = item.get("end_date_time")
-        tender_time = convert_to_datetime(tender_time)
-        date_format = '%Y-%m-%d %H:%M:%S'
-        date = datetime.strptime(tender_time, date_format)
-        tender_id = item.get("id")
-        now_utc = datetime.utcnow()
-        formatted_time = now_utc.strftime("%Y-%m-%d %H:%M:%S")
-
-        formatted_time_datetime = datetime.strptime(formatted_time, date_format)
-
-        if date < formatted_time_datetime:
-            update_tender_status(tender_id)
-
-
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8001)
+    uvicorn.run(app, host="0.0.0.0", port=8003)
 
 
