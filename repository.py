@@ -1,14 +1,11 @@
-import datetime
-
 from fastapi import FastAPI
 import psycopg2
 from psycopg2 import sql
 from psycopg2 import OperationalError
 from password_hasher import *
 from fastapi import FastAPI, Response, HTTPException
-app = FastAPI()
 from fastapi.encoders import jsonable_encoder
-
+import datetime
 
 def get_db_connection():
     conn = psycopg2.connect(
@@ -23,7 +20,13 @@ def get_db_connection():
 
 def fetch_tenders_info():
     # Database connection parameters
-    conn = get_db_connection()
+    conn = psycopg2.connect(
+        dbname="tendering-system-db",
+        user="username",
+        password="password",
+        host="localhost", # Or "127.0.0.1"
+        port="5432"
+    )
 
     # Create a cursor object
     cur = conn.cursor()
@@ -72,7 +75,13 @@ def fetch_tenders_info():
 
 
 def fetch_pending_tender_by_id(tender_id):
-    conn = get_db_connection()
+    conn = psycopg2.connect(
+        dbname="tendering-system-db",
+        user="username",
+        password="password",
+        host="localhost",
+        port="5432"
+    )
 
     cur = conn.cursor()
     query = """
@@ -167,7 +176,13 @@ t.id, t.description, t.created_date_time, t.start_date_time, t.end_date_time, t.
 
 
 def is_user_exist(user):
-    conn = get_db_connection()
+    conn = psycopg2.connect(
+        dbname="tendering-system-db",
+        user="username",
+        password="password",
+        host="localhost",
+        port="5432"
+    )
     cursor = conn.cursor()
 
     # Define the select query
@@ -184,7 +199,13 @@ def is_user_exist(user):
 
 
 def send_tender_supplier_info(supplier_id, price):
-    conn = get_db_connection()
+    conn = psycopg2.connect(
+        dbname="tendering-system-db",
+        user="username",
+        password="password",
+        host="localhost",  # Или "127.0.0.1"
+        port="5432"
+    )
 
     # Создание объекта курсора
     cur = conn.cursor()
@@ -214,7 +235,13 @@ def send_tender_supplier_info(supplier_id, price):
 
 def add_user(user, hashed_password):
     # Connect to the database
-    conn = get_db_connection()
+    conn = psycopg2.connect(
+        dbname="tendering-system-db",
+        user="username",
+        password="password",
+        host="localhost",
+        port="5432"
+    )
     cursor = conn.cursor()
 
     # Check if login already exists
@@ -255,7 +282,13 @@ def add_user(user, hashed_password):
 
 
 def user_id_by_login(login, password_hash):
-    conn = get_db_connection()
+    conn = psycopg2.connect(
+        dbname="tendering-system-db",
+        user="username",
+        password="password",
+        host="localhost",
+        port="5432"
+    )
     cursor = conn.cursor()
 
     query = """SELECT id, user_type FROM tender_system_user WHERE login=%s and password_hash=%s"""
@@ -274,7 +307,13 @@ def insert_cookie(user_id, cookie):
     if is_cookie_user_exist(user_id):
         return True
     # Connect to the database
-    conn = get_db_connection()
+    conn = psycopg2.connect(
+        dbname="tendering-system-db",
+        user="username",
+        password="password",
+        host="localhost",
+        port="5432"
+    )
     cursor = conn.cursor()
 
     # Define the insert query
@@ -297,7 +336,13 @@ def insert_cookie(user_id, cookie):
 
 
 def supplier_id_by_login(login):
-    conn = get_db_connection()
+    conn = psycopg2.connect(
+        dbname="tendering-system-db",
+        user="username",
+        password="password",
+        host="localhost",
+        port="5432"
+    )
     cursor = conn.cursor()
 
     query = """SELECT id FROM tender_system_user WHERE login=%s"""
@@ -313,7 +358,13 @@ def supplier_id_by_login(login):
 
 
 def is_cookie_user_exist(user_id):
-    conn = get_db_connection()
+    conn = psycopg2.connect(
+        dbname="tendering-system-db",
+        user="username",
+        password="password",
+        host="localhost",
+        port="5432"
+    )
     cursor = conn.cursor()
 
     # Define the select query
@@ -332,7 +383,13 @@ def is_cookie_user_exist(user_id):
 def is_cookie_exist(cookie):
     conn = None
     try:
-        conn = get_db_connection()
+        conn = psycopg2.connect(
+            dbname="tendering-system-db",
+            user="username",
+            password="password",
+            host="localhost",
+            port="5432"
+        )
         cursor = conn.cursor()
 
         # Define the select query

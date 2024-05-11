@@ -9,6 +9,7 @@ import psycopg2
 from password_hasher import *
 from fastapi import FastAPI, HTTPException, Request
 from apscheduler.schedulers.background import BackgroundScheduler
+import datetime
 
 
 app = FastAPI()
@@ -81,12 +82,12 @@ def insert_tender_info(item: Post_tender):
     conn = get_db_connection()
     cursor = conn.cursor()
     query = """
-            INSERT INTO tender(tender_status, description, start_date_time, user_id, created_date_time, end_date_time, 
+            INSERT INTO tender(tender_status, description, user_id, created_date_time, start_date_time, end_date_time, 
             first_price, title, delivery_address, delivery_area)
 VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
             """
     try:
-        cursor.execute(query, (item.tender_status, item.description, item.start_date_time, item.user_id, item.created_date_time, item.end_date_time, item.first_price, item.title, item.delivery_address, item.delivery_area))
+        cursor.execute(query, (item.tender_status, item.description, item.user_id, item.created_date_time, item.start_date_time, item.end_date_time, item.first_price, item.title, item.delivery_address, item.delivery_area))
         conn.commit()
         update_tender_status()
         return True
@@ -102,11 +103,10 @@ VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
 async def login(item: Check_user, response: Response):
     hash = is_user_exist(item)
     if hash is not None:
-        response.set_cookie(key="auth", value=hash)
+        cookie = hash + item.login
+        response.set_cookie(key="auth", value=cookie)
         user = user_id_by_login(item.login, hash)
         if user:
-            now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")  # Convert datetime object to string
-            cookie = hash + now
             user_id = user[0]
             usertype = user[1]
             insert_cookie(user_id, cookie)

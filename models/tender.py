@@ -47,11 +47,11 @@ class Tender:
 class Post_tender(BaseModel):
     tender_status: str
     description: str
-    start_date_time: datetime
     user_id: int
     created_date_time: datetime
+    start_date_time: datetime
     end_date_time: datetime
-    first_price: int
+    first_price: str
     title: str
     delivery_address: str
     delivery_area: str
