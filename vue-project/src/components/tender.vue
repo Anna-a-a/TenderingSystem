@@ -1,6 +1,9 @@
 <template>
   <div class="container">
-    <div v-if="tender">
+    <div v-if="loading" class="loading-container">
+      <i class="fa-solid fa-spinner fa-spin"></i>
+    </div>
+    <div v-else-if="tender">
       <div class="tender-card">
         <p class="overflow-text">
         <h4>{{ tender.title }}</h4>
@@ -14,12 +17,13 @@
           Статус: <span :class="{ 'text-success': status === 'в процессе', 'text-danger': status === 'закрыт' }">{{
       status }}</span>
         </p>
-
         <p class="overflow-text">{{ tender.description }}</p>
         <div v-if="userType == 'supplier'">
-          <button class="mybtn" @click="goToAnswerPage(tender.id)"
-            v-if="showWinnerButton && !this.is_winner && !this.tender_sup_id.includes(this.userId) && status != 'открыт'">Участвовать</button>
+          <button class="mybtn" @click="openPriceModal"
+            v-if="!this.is_winner && this.tender_sup_id !== null && this.userId !== null && !this.tender_sup_id.includes(this.userId) && status != 'открыт' && status != 'закрыт'">Участвовать</button>
+
         </div>
+
       </div>
       <div class="tender-card-participants" v-if="login == this.tender.user_login">
         <div class="tender-card-participants__head" v-if="!is_winner">Список участников</div>
@@ -54,6 +58,21 @@
         </div>
       </div>
     </div>
+
+    <div v-if="showPriceModal" class="modal1">
+      <div class="modal-content1">
+        <div class="form-group">
+          <label for="price">Введите цену</label>
+          <input type="number" class="form-control" placeholder="Цена" id="price" v-model.number="price"
+            @input="limitInputLength" required>
+        </div>
+        <div class="modal-buttons1">
+          <button @click="closePriceModal">Отмена</button>
+          <button @click="confirmPrice">Отправить</button>
+        </div>
+      </div>
+    </div>
+
   </div>
 </template>
 
@@ -72,8 +91,11 @@ export default {
       selectedWinner: null, // Добавлено состояние для выбранного победителя
       is_winner: false,
       tender_sup_id: [],
-      showWinnerButton: false,
       status: '',
+      price: '', // Добавлено поле для ввода цены
+      loading: true,
+      showPriceModal: false, // Добавлено состояние для модального окна цены
+      tenderLoaded: false,
     }
   },
   created() {
@@ -91,6 +113,20 @@ export default {
       });
   },
   methods: {
+    limitInputLength(event) {
+      const inputValue = event.target.value;
+      const maxLength = 12;
+
+      // Удалить все символы, которые не являются цифрами
+      const numericValue = inputValue.replace(/\D/g, '');
+
+      // Обрезать значение до максимальной длины
+      if (numericValue.length > maxLength) {
+        event.target.value = numericValue.slice(0, maxLength);
+      } else {
+        event.target.value = numericValue;
+      }
+    },
     async getUserType() {
       try {
         const response = await axios.get('/user_info');
@@ -109,11 +145,13 @@ export default {
             this.tender = null;
           }
           else {
+            console.log(this.tender)
             this.is_winner = this.tender.is_winner;
             this.tender.date = new Date(this.tender.created_date_time).toLocaleDateString();
             this.tender.time = new Date(this.tender.start_date_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
             this.tender.end_date = new Date(this.tender.end_date_time).toLocaleDateString();
             this.tender.end_time = new Date(this.tender.end_date_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
+            this.tender.description = this.tender.description.charAt(0).toUpperCase() + this.tender.description.slice(1);
             this.tender.delivery_address = this.tender.delivery_address.charAt(0).toUpperCase() + this.tender.delivery_address.slice(1);
             this.tender.delivery_area = this.tender.delivery_area.charAt(0).toUpperCase() + this.tender.delivery_area.slice(1);
             this.tender_sup_id = this.tender.supplier_ids;
@@ -126,6 +164,8 @@ export default {
             else {
               this.status = "закрыт"
             }
+            this.loading = false;
+            this.tenderLoaded = true;
             console.log(this.is_winner);
           }
         })
@@ -146,6 +186,12 @@ export default {
     closeModal() {
       this.showModal = false;
     },
+    openPriceModal() {
+      this.showPriceModal = true;
+    },
+    closePriceModal() {
+      this.showPriceModal = false;
+    },
     confirmWinner() {
       const { login, id } = this.selectedWinner;
       const formData = {
@@ -165,13 +211,35 @@ export default {
           this.closeModal(); // Закрываем модальное окно в случае ошибки
         });
     },
-  },
-  watch: {
-    tender() {
-      // отсрочка отображения кнопки на 3 секунды
-      setTimeout(() => {
-        this.showWinnerButton = true;
-      }, 50);
+    // Добавлен метод submitForm
+    submitForm() {
+      const formData = {
+        tender_id: this.id,
+        price: this.price,
+        login: this.login,
+      };
+      console.log(formData);
+      axios.post('/supplier_response', formData)
+        .then(response => {
+          console.log(response);
+          // Очистить форму после успешной отправки
+          this.price = '';
+          this.$router.push('/');
+        })
+        .catch(error => {
+          console.log(error.response.data);
+          console.log(error.response.status);
+          console.log(error.response);
+        });
+    },
+    // Изменен метод confirmPrice
+    confirmPrice() {
+      if (!this.price) {
+        // Показать сообщение об ошибке и предотвратить отправку формы
+        return;
+      }
+      this.submitForm();
+      this.closePriceModal();
     },
   },
 }

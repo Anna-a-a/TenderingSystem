@@ -1,7 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
 import create_tender from "./components/create_tender.vue";
 import main_page from "./components/main_page.vue";
-import response from "./components/response.vue";
 import profile from "./components/profile.vue"
 import mytenders from "./components/mytenders.vue";
 import myresponse from "./components/myresponse.vue";
@@ -23,6 +22,5 @@ export default createRouter({
         { path: '/auth', component: authorization},
         { path: '/regist', component: registration}, 
         { path: '/tender/:id', component: tender, props: true },
-        { path: '/tender/:id/response', component: response, props: true },
     ]
 })

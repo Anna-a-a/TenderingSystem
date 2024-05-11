@@ -2,7 +2,11 @@
   <SideMenu />
   <div class="container">
     <h1 style="text-align: center;">Личные данные</h1>
-    <div id="data">
+    <div v-if="loading" class="loading-container">
+      <i class="fa-solid fa-spinner fa-spin"></i>
+    </div>
+
+    <div id="data" v-else>
       <div class="data-form">
         <div class="data-form-label">Логин:</div>
         <div class="data-form-field">
@@ -12,7 +16,7 @@
       <div class="data-form">
         <div class="data-form-label">Email:</div>
         <div class="data-form-field">
-          <input type="email" v-model="email" :disabled="!editingEmail">
+          <input type="email" v-model="email" :disabled="!editingEmail" maxlength="30">
         </div>
         <div class="data-form-buttons">
           <button @click="editEmail" v-if="!editingEmail" class="btn-edit"><i
@@ -26,7 +30,7 @@
       <div class="data-form">
         <div class="data-form-label">ФИО:</div>
         <div class="data-form-field">
-          <input type="text" v-model="name" :disabled="!editingName">
+          <input type="text" v-model="name" :disabled="!editingName" maxlength="50">
         </div>
         <div class="data-form-buttons">
           <button @click="editName" v-if="!editingName" class="btn-edit"><i
@@ -59,7 +63,9 @@ export default {
       user_id: 0,
       userType: null,
       emailError: null,
+      previousName: '',
       previousEmail: '',
+      loading: true,
     }
   },
   async created() {
@@ -74,7 +80,7 @@ export default {
         this.login = response.data.login;
         this.user_id = response.data.user_id;
         this.userType = response.data.user_type;
-        console.log(this.user_id);
+        this.loading = false;
       } catch (error) {
         console.error(error);
       }
@@ -117,9 +123,11 @@ export default {
     },
 
     cancelEditEmail() {
+      this.email = this.previousEmail;
       this.editingEmail = false;
     },
     editName() {
+      this.previousName = this.name;
       this.editingName = true;
     },
     async saveName() {
@@ -134,6 +142,7 @@ export default {
       }
     },
     cancelEditName() {
+      this.name = this.previousName;
       this.editingName = false;
     },
   }

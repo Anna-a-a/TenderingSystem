@@ -9,7 +9,7 @@
       <router-link to="/">На главную</router-link>
       <router-link to="/profile">Личные данные</router-link>
       <router-link to="/mytenders">Мои тендеры</router-link>
-      <router-link to="/myresponse">Ответы по заявкам</router-link>
+      <router-link to="/myresponse" v-show="userTypeVuex=='supplier'">Ответы по заявкам</router-link>
       <a @click="showModal = true">Выйти из профиля</a>
 
       <!-- Модальное окно -->
@@ -28,7 +28,9 @@
 </template>
 
 <script>
+import axios from 'axios';
 import Cookies from 'js-cookie';
+import { mapState } from 'vuex';
 
 export default {
   data() {
@@ -36,6 +38,9 @@ export default {
       showSideMenu: false,
       showModal: false,
     };
+  },
+  created() {
+    this.$store.dispatch('getUserTypeVuex');
   },
   mounted() {
     // Проверяем, сохранено ли состояние меню в localStorage
@@ -62,7 +67,11 @@ export default {
       }, 20);
     },
   },
+  computed: {
+    ...mapState(['userTypeVuex']),
+  },
 };
+
 </script>
 
 <style scoped>

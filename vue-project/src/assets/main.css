@@ -273,15 +273,15 @@
     padding: 5px 10px;
     border-radius: 10px; */
     /* flex-grow: 1; */
-  margin-right: 10px;
-  cursor: pointer;
-  color: black;
-  background-color: #c1d5f5;
-  border: none;
-  border-radius: 5px;
-  padding: 10px;
-  margin-top: 10px;
-  transition: background-color 0.3s ease;
+    margin-right: 10px;
+    cursor: pointer;
+    color: black;
+    background-color: #c1d5f5;
+    border: none;
+    border-radius: 5px;
+    padding: 10px;
+    margin-top: 10px;
+    transition: background-color 0.3s ease;
 }
 
 .mybtn:hover {
@@ -439,7 +439,7 @@
 }
 
 .btn-outline-info[disabled]:hover {
-  background: #e9e3e3 !important;
+    background: #e9e3e3 !important;
 }
 
 .no-info {
@@ -464,4 +464,29 @@
 
 .btn-outline-primary:hover {
     background: #98baf0 !important;
+}
+
+.fa-spin {
+    animation: fa-spin 2s infinite linear;
+    font-size: 50px;
+}
+
+@keyframes fa-spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(359deg);
+    }
+}
+
+.loading-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 50%;
+    margin: 0 auto;
+    margin-top: 50px;
 }

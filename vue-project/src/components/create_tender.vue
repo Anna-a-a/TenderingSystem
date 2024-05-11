@@ -6,7 +6,7 @@
           <div class="mb-3">
             <label for="title_app" class="form-label">Название</label>
             <input v-model="title" type="text" class="form-control" id="title_app" placeholder="Введите название заявки"
-              :class="{ 'is-invalid': formSubmitted && !title }">
+              maxlength="30" :class="{ 'is-invalid': formSubmitted && !title }">
             <div v-if="formSubmitted && !title" class="invalid-feedback">
               Поле не может быть пустым
             </div>
@@ -14,22 +14,22 @@
           <div class="mb-3">
             <label for="description">Описание</label>
             <textarea v-model="description" class="form-control" id="description" placeholder="Введите текст" rows="15"
-              :class="{ 'is-invalid': formSubmitted && !description }"></textarea>
+              maxlength="1000" :class="{ 'is-invalid': formSubmitted && !description }"></textarea>
             <div v-if="formSubmitted && !description" class="invalid-feedback">
               Поле не может быть пустым
             </div>
           </div>
           <div class="mb-3">
             <label for="first_price" class="form-label">Цена</label>
-            <input v-model="first_price" type="text" class="form-control" id="first_price" placeholder="Введите цену"
-              :class="{ 'is-invalid': formSubmitted && !validPrice }">
-            <div v-if="formSubmitted && !validPrice" class="invalid-feedback">
-              Цена должна содержать только цифры
+            <input type="number" class="form-control" placeholder="Цена" id="first_price" v-model.number="first_price"
+              @input="limitInputLength" :class="{ 'is-invalid': formSubmitted && !price }">
+            <div v-if="formSubmitted && !price" class="invalid-feedback">
+              Поле не может быть пустым
             </div>
           </div>
           <div class="mb-3">
             <label for="delivery_area" class="form-label">Область поставки</label>
-            <input v-model="delivery_area" type="text" class="form-control" id="delivery_area"
+            <input v-model="delivery_area" type="text" class="form-control" id="delivery_area" maxlength="70"
               placeholder="Введите название области" :class="{ 'is-invalid': formSubmitted && !delivery_area }">
             <div v-if="formSubmitted && !delivery_area" class="invalid-feedback">
               Поле не может быть пустым
@@ -37,7 +37,7 @@
           </div>
           <div class="mb-3">
             <label for="delivery_address" class="form-label">Место поставки</label>
-            <input v-model="delivery_address" type="text" class="form-control" id="delivery_address"
+            <input v-model="delivery_address" type="text" class="form-control" id="delivery_address" maxlength="70"
               placeholder="Введите место поставки" :class="{ 'is-invalid': formSubmitted && !delivery_address }">
             <div v-if="formSubmitted && !delivery_address" class="invalid-feedback">
               Поле не может быть пустым
@@ -48,21 +48,21 @@
               <label for="date-start">Дата начала:</label>
               <br>
               <input type="date" id="date-start" name="date-start" value="2024-01-01" min="2024-01-01" max="2100-12-31"
-                v-model="start_date" />
+                v-model="start_date" required/>
               <br>
               <label for="date-time-start">Время начала:</label>
               <br>
-              <input type="time" id="date-time-start" name="date-time-start" value="13:37" v-model="start_time" />
+              <input type="time" id="date-time-start" name="date-time-start" value="13:37" v-model="start_time" required/>
             </div>
             <div class="ms-auto">
               <label for="date-end">Дата окончания:</label>
               <br>
               <input type="date" id="date-end" name="date-end" value="2024-01-02" min="2024-01-01" max="2100-12-31"
-                v-model="end_date" />
+                v-model="end_date" required/>
               <br>
               <label for="date-time-end">Время окончания:</label>
               <br>
-              <input type="time" id="date-time-end" name="date-time-end" value="13:37" v-model="end_time" />
+              <input type="time" id="date-time-end" name="date-time-end" value="13:37" v-model="end_time" required/>
             </div>
           </div>
 
@@ -80,29 +80,28 @@ import axios from 'axios';
 export default {
   data() {
     return {
-      title: '',
-      description: '',
-      first_price: '',
-      delivery_area: '',
-      delivery_address: '',
       userType: null,
       user_id: null,
       formSubmitted: false,
     };
   },
-  computed: {
-    validPrice() { // Добавлено для валидации цены
-      const priceRegex = /^\d+$/; // Регулярное выражение для проверки, что цена состоит только из цифр
-      return priceRegex.test(this.first_price);
-    }
-  },
   methods: {
+    limitInputLength(event) {
+      const inputValue = event.target.value;
+      const maxLength = 12;
+
+      // Удалить все символы, которые не являются цифрами
+      const numericValue = inputValue.replace(/\D/g, '');
+
+      // Обрезать значение до максимальной длины
+      if (numericValue.length > maxLength) {
+        event.target.value = numericValue.slice(0, maxLength);
+      } else {
+        event.target.value = numericValue;
+      }
+    },
     submitForm() {
       this.formSubmitted = true;
-      if (!this.validPrice) {
-        // Здесь можно добавить логику для отображения ошибки, если цена не проходит валидацию
-        return;
-      }
       const currentDate = new Date();
       const formattedDate = currentDate.toISOString().slice(0, 19).replace('T', ' ');
       const dateTimeStart = this.start_date + ' ' + this.start_time + ':00';
@@ -113,14 +112,14 @@ export default {
         description: this.description,
         start_date_time: formattedDate,
         user_id: this.user_id,
-        created_date_time: dateTimeStart,
-        end_date_time: dateTimeEnd,
         first_price: this.first_price,
         title: this.title,
         delivery_address: this.delivery_address,
         delivery_area: this.delivery_area,
+        created_date_time: dateTimeStart,
+        end_date_time: dateTimeEnd,
       };
-
+      console.log(formData)
       axios.post('/send_tender_info', formData)
         .then(response => {
           console.log(response);

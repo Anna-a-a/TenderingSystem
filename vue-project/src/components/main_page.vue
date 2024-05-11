@@ -1,6 +1,15 @@
 <template>
   <div class="container">
-    <div class="filter-container" v-if="userType">
+
+    <div v-if="loading" class="loading-container">
+      <i class="fa-solid fa-spinner fa-spin"></i>
+    </div>
+
+    <div v-else-if="filteredTenders.length == 0 && !userType" class="noresult">
+      <strong>Вы не авторизовались <i class="fa-solid fa-face-sad-tear"></i></strong>
+    </div>
+
+    <div class="filter-container" v-else>
       <label class="checkbox style-c">
         <input type="checkbox" value="open" v-model="filterStatus" @click="updateFilterStatus('open')"/>
         <div class="checkbox__checkmark"></div>
@@ -51,7 +60,7 @@
         </div>
         <div class="mycard-col">
           <div class="mycard-col__content">
-            {{ tender.delivery_area }}, {{ tender.delivery_address }}
+            {{ tender.delivery_area }}, {{ tender.delivery_address }} 
           </div>
         </div>
         <div class="mycard-col" v-if="filterStatus.length === 0">
@@ -66,9 +75,6 @@
         </div>
       </div>
     </div>
-    <div class="noresult" v-if="filteredTenders.length == 0 && showNoAuthMessage && !userType"><strong>Вы не
-        авторизовались <i class="fa-solid fa-face-sad-tear"></i></strong>
-      </div>
   </div>
 </template>
 
@@ -81,19 +87,14 @@ export default {
       tenders: [],
       in_progress_tenders: [],
       closed_tenders: [],
-      showNoAuthMessage: false,
       filterStatus: [],
-      userType: null,
+      userType: '',
+      loading: true,
     };
   },
   created() {
     this.getUserType();
     this.fetchTenders();
-  },
-  mounted() {
-    setTimeout(() => {
-      this.showNoAuthMessage = true;
-    }, 100);
   },
   methods: {
     getStatusClass(status) {
@@ -125,7 +126,10 @@ export default {
       try {
         const response = await axios.get('/user_info');
         this.userType = response.data.user_type;
+        console.log(1)
+        console.log(response.data.user_type)
       } catch (error) {
+        this.loading = false;
         console.error(error);
       }
     },
@@ -145,6 +149,7 @@ export default {
             let title = tender.title
             let status = tender.status
 
+            description = description.charAt(0).toUpperCase() + description.slice(1);
             delivery_address = delivery_address.charAt(0).toUpperCase() + delivery_address.slice(1);
             delivery_area = delivery_area.charAt(0).toUpperCase() + delivery_area.slice(1);
 
@@ -191,6 +196,9 @@ export default {
                 status,
               });
             }
+          }
+          if (this.sortedTenders.length) {
+            this.loading = false;
           }
         })
         .catch(error => {

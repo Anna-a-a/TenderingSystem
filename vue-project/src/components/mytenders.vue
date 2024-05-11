@@ -2,7 +2,21 @@
   <SideMenu />
   <div class="container">
     <h1 style="text-align: center;">Мои тендеры</h1>
-    <div class="mycard" v-if="tenders.length > 0">
+
+    <div v-if="loading" class="loading-container">
+      <i class="fa-solid fa-spinner fa-spin"></i>
+    </div>
+
+    <div v-else>
+      <div class="no-info" v-if="tenders.length == 0">
+      <div v-if="userType=='customer'">
+      Вы еще не создали ни одного тендера
+      </div>
+      <div v-if="userType=='supplier'">
+        Вы еще не участвовали в тендерах
+      </div>
+    </div>
+    <div class="mycard" v-else>
       <div class="mycard-head">
         <div class="mycard-col">
           <div>
@@ -40,15 +54,10 @@
         </div>
       </div>
     </div>
-    <div class="no-info" v-else>
-      <div v-if="userType=='customer'">
-      Вы еще не создали ни одного тендера
-      </div>
-      <div v-if="userType=='supplier'">
-        Вы еще не участвовали в тендерах
-      </div>
-    </div>
   </div>
+
+  </div>
+  
 </template>
 
 <script>
@@ -64,6 +73,7 @@ export default {
       tenders: [],
       user_id: 0,
       userType: null,
+      loading: true,
     }
   },
   created() {
@@ -100,6 +110,7 @@ export default {
         axios.get(apiPath)
           .then(response => {
             for (let tender of response.data) {
+              console.log(response.data)
               let id = tender.id
               let date = new Date(tender.created_date_time).toLocaleDateString()
               let time = new Date(tender.start_date_time).toLocaleTimeString();
@@ -111,6 +122,7 @@ export default {
               let first_price = tender.first_price
               let title = tender.title
 
+              description = description.charAt(0).toUpperCase() + description.slice(1);
               delivery_address = delivery_address.charAt(0).toUpperCase() + delivery_address.slice(1);
               delivery_area = delivery_area.charAt(0).toUpperCase() + delivery_area.slice(1);
 
@@ -126,10 +138,13 @@ export default {
                 first_price,
                 title
               })
+              // this.loading = false;
             }
+            this.loading = false;
             this.tenders.sort((a, b) => b.id - a.id)
           })
           .catch(error => {
+            this.loading = false;
             console.error(error)
           })
       }

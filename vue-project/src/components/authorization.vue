@@ -5,7 +5,7 @@
         <form @submit.prevent="onSubmit">
           <div class="mb-3">
             <label for="name" class="form-label">Логин</label>
-            <input type="text" class="form-control" id="name" v-model="login" placeholder="Введите Ваш логин"
+            <input type="text" class="form-control" id="name" v-model="login" placeholder="Введите Ваш логин" maxlength="20"
               :class="{ 'is-invalid': submitted &&!login }" />
             <div v-if="submitted &&!login" class="invalid-feedback">
               Логин не может быть пустым
@@ -13,7 +13,7 @@
           </div>
           <div class="mb-3">
             <label for="thepassword" class="form-label">Пароль</label>
-            <input type="password" class="form-control" id="thepassword" v-model="password" placeholder="Введите Ваш пароль"
+            <input type="password" class="form-control" id="thepassword" v-model="password" placeholder="Введите Ваш пароль" maxlength="40"
               :class="{ 'is-invalid': submitted &&!password }" />
             <div v-if="submitted &&!password" class="invalid-feedback">
               Пароль не может быть пустым
