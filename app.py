@@ -105,7 +105,7 @@ async def login(item: Check_user, response: Response):
         response.set_cookie(key="auth", value=hash)
         user = user_id_by_login(item.login, hash)
         if user:
-            now = datetime.datetime.now()
+            now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")  # Convert datetime object to string
             cookie = hash + now
             user_id = user[0]
             usertype = user[1]
