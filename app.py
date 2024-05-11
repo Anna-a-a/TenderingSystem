@@ -13,7 +13,7 @@ from apscheduler.schedulers.background import BackgroundScheduler
 
 app = FastAPI()
 scheduler = BackgroundScheduler()
-scheduler.add_job(update_tender_status, "interval", minutes=10)
+scheduler.add_job(update_tender_status, 'cron', minute='0,30', hour='*')
 scheduler.start()
 
 
