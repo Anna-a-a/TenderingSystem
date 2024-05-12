@@ -138,7 +138,7 @@ export default {
         .then(response => {
           for (let tender of response.data) {
             let id = tender.id
-            let date = new Date(tender.created_data_time).toLocaleDateString()
+            let date = new Date(tender.start_data_time).toLocaleDateString()
             let time = new Date(tender.start_data_time).toLocaleTimeString();
             let description = tender.description
             let end_date = new Date(tender.end_data_time).toLocaleDateString()
