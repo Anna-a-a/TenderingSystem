@@ -27,7 +27,7 @@ const router = createRouter({
 });
 
 router.beforeEach(async (to, from, next) => {
-    if (to.name == 'MainPage' || to.name == 'Tender') {
+    if (to.path === '/' || to.path.match(/^\/tender\/\d+$/)) {
         try {
             const response = await axios.get('/update_tender_status');
             // Обработайте ответ сервера, если необходимо
