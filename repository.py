@@ -6,6 +6,7 @@ from password_hasher import *
 from fastapi import FastAPI, Response, HTTPException
 from fastapi.encoders import jsonable_encoder
 import datetime
+from datetime import timedelta
 
 def get_db_connection():
     conn = psycopg2.connect(
@@ -698,7 +699,7 @@ def update_tender_status():
     cursor = conn.cursor()
 
     # Получение текущего времени
-    now = datetime.datetime.now()
+    now = datetime.datetime.now() - timedelta(hours=5)
 
     # Получение всех тендеров из базы данных
     cursor.execute("SELECT id, start_date_time, end_date_time, tender_status FROM tender")
