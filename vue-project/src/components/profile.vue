@@ -28,7 +28,7 @@
         </div>
       </div>
       <div class="data-form">
-        <div class="data-form-label">ФИО:</div>
+        <div class="data-form-label">Компания:</div>
         <div class="data-form-field">
           <input type="text" v-model="name" :disabled="!editingName" maxlength="50">
         </div>

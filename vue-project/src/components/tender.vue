@@ -35,7 +35,7 @@
             <div class="tender-card-participants__body-info">Почта: {{ tender.supplier_emails[index] }}</div>
             <div class="tender-card-participants__body-info">Цена: {{ tender.supplier_prices[index] }} <i
                 class="fa-solid fa-ruble-sign"></i></div>
-            <button class="mybtn" @click="openModalForWinner(participant, tender.id)" v-if="!is_winner">Выбрать как
+            <button class="mybtn" @click="openModalForWinner(participant, tender.id)" v-if="!is_winner && status != 'открыт' && status != 'закрыт'">Выбрать как
               победителя</button>
           </div>
           <div v-else>
@@ -147,7 +147,7 @@ export default {
           else {
             console.log(this.tender)
             this.is_winner = this.tender.is_winner;
-            this.tender.date = new Date(this.tender.created_date_time).toLocaleDateString();
+            this.tender.date = new Date(this.tender.start_date_time).toLocaleDateString();
             this.tender.time = new Date(this.tender.start_date_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
             this.tender.end_date = new Date(this.tender.end_date_time).toLocaleDateString();
             this.tender.end_time = new Date(this.tender.end_date_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });

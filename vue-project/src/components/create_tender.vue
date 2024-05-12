@@ -47,22 +47,22 @@
             <div class="me-3">
               <label for="date-start">Дата начала:</label>
               <br>
-              <input type="date" id="date-start" name="date-start" value="2024-01-01" min="2024-01-01" max="2100-12-31"
+              <input type="date" id="date-start" name="date-start" min="2024-01-01" max="2100-12-31"
                 v-model="start_date" required/>
               <br>
               <label for="date-time-start">Время начала:</label>
               <br>
-              <input type="time" id="date-time-start" name="date-time-start" value="13:37" v-model="start_time" required/>
+              <input type="time" id="date-time-start" name="date-time-start" v-model="start_time" required/>
             </div>
             <div class="ms-auto">
               <label for="date-end">Дата окончания:</label>
               <br>
-              <input type="date" id="date-end" name="date-end" value="2024-01-02" min="2024-01-01" max="2100-12-31"
+              <input type="date" id="date-end" name="date-end" min="2024-01-01" max="2100-12-31"
                 v-model="end_date" required/>
               <br>
               <label for="date-time-end">Время окончания:</label>
               <br>
-              <input type="time" id="date-time-end" name="date-time-end" value="13:37" v-model="end_time" required/>
+              <input type="time" id="date-time-end" name="date-time-end" v-model="end_time" required/>
             </div>
           </div>
 
@@ -110,13 +110,13 @@ export default {
       const formData = {
         tender_status: "open",
         description: this.description,
-        start_date_time: formattedDate,
+        start_date_time: dateTimeStart,
         user_id: this.user_id,
         first_price: this.first_price,
         title: this.title,
         delivery_address: this.delivery_address,
         delivery_area: this.delivery_area,
-        created_date_time: dateTimeStart,
+        created_date_time: formattedDate,
         end_date_time: dateTimeEnd,
       };
       console.log(formData)
