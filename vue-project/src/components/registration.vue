@@ -5,7 +5,7 @@
         <form @submit.prevent="onSubmit">
           <div class="mb-3">
             <label for="surname" class="form-label">Название компании</label>
-            <input type="text" class="form-control" id="surname" v-model="name" placeholder="Введите Ваши ФИО" maxlength="50"
+            <input type="text" class="form-control" id="surname" v-model="name" placeholder="Введите название компании" maxlength="50"
               :class="{ 'is-invalid': submitted && !name }" />
             <div v-if="submitted && !name" class="invalid-feedback">
               Поле не может быть пустым!

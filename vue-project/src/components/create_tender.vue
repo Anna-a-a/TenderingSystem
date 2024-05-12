@@ -21,8 +21,8 @@
           </div>
           <div class="mb-3">
             <label for="first_price" class="form-label">Цена</label>
-            <input type="number" class="form-control" placeholder="Цена" id="first_price" v-model.number="first_price"
-              @input="limitInputLength" :class="{ 'is-invalid': formSubmitted && !price }">
+            <input type="number" class="form-control" placeholder="Цена" id="first_price" v-model="first_price"
+              @input="limitInputLength" :class="{ 'is-invalid': formSubmitted && !first_price }">
             <div v-if="formSubmitted && !price" class="invalid-feedback">
               Поле не может быть пустым
             </div>
@@ -112,7 +112,7 @@ export default {
         description: this.description,
         start_date_time: dateTimeStart,
         user_id: this.user_id,
-        first_price: this.first_price,
+        first_price: this.first_price.toString(),
         title: this.title,
         delivery_address: this.delivery_address,
         delivery_area: this.delivery_area,
