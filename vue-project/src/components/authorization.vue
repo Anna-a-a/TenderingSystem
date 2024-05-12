@@ -57,6 +57,9 @@ export default {
         // Обработка успешного ответа
         console.log(response.data);
         this.$router.push('/');
+        setTimeout(function() {
+           location.reload();
+         }, 200);
       } catch (error) {
         // Обработка ошибки
         console.error(error);
