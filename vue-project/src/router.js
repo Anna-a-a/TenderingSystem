@@ -27,7 +27,7 @@ const router = createRouter({
 });
 
 router.beforeEach(async (to, from, next) => {
-    if (to.name === 'main_page' || to.name === 'tender') {
+    if (to.name == 'MainPage' || to.name == 'Tender') {
         try {
             const response = await axios.get('/update_tender_status');
             // Обработайте ответ сервера, если необходимо
