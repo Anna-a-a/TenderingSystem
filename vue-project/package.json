@@ -10,8 +10,10 @@
   },
   "dependencies": {
     "axios": "^1.6.8",
+    "js-cookie": "^3.0.5",
     "vue": "^3.4.21",
     "vue-router": "^4.3.0",
+    "vue-scrollto": "^2.20.0",
     "vuex": "^4.1.0"
   },
   "devDependencies": {

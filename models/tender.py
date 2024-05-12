@@ -47,21 +47,35 @@ class Tender:
 class Post_tender(BaseModel):
     tender_status: str
     description: str
-    start_date_time: datetime
     user_id: int
     created_date_time: datetime
+    start_date_time: datetime
     end_date_time: datetime
     first_price: str
     title: str
     delivery_address: str
     delivery_area: str
 
-    @validator("start_date_time", "created_date_time", "end_date_time", pre=True)
-    def validate_datetime(cls, v):
-        try:
-            return datetime.strptime(v, "%Y-%m-%d %H:%M:%S")
-        except ValueError:
-            raise ValueError("Incorrect data format, should be YYYY-MM-DD HH:MM:SS")
+
+class User_tender:
+    def __init__(self, id, tender_status, description, created_date_time, start_date_time, end_date_time, user_id,
+                 first_price, title, delivery_address, delivery_area):
+        self.id = id
+        self.tender_status = tender_status
+        self.description = description
+        self.created_date_time = created_date_time
+        self.start_date_time = start_date_time
+        self.end_date_time = end_date_time
+        self.user_id = user_id
+        self.first_price = first_price
+        self.title = title
+        self.delivery_address = delivery_address
+        self.delivery_area = delivery_area
+
+
+class Tender_winner(BaseModel):
+    login: str
+    tender_id: int
 
 
 

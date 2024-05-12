@@ -3,11 +3,14 @@
     <div class="container">
         <a class="navbar-brand" href="/">TenderingSystem</a>
         <form class="form-inline my-2 my-lg-0 d-flex justify-content-between w-100">
-            <input class="form-control flex-grow-1" type="search" placeholder="Поиск" aria-label="Search" v-model="searchQuery" @input="searchTenders">
-            <button class="btn btn-outline-info my-2 my-sm-0" type="submit" style="margin-left: 10px;">Искать <i class="fa-solid fa-magnifying-glass"></i></button>
+            <input class="form-control flex-grow-1" type="search" placeholder="Поиск" aria-label="Search" maxlength="1000" v-model="searchQuery" @input="searchTenders" :disabled="!userType">
+            <button class="btn btn-outline-info my-2 my-sm-0" type="submit" style="margin-left: 10px;" @click="clearSearch" :disabled="!userType">Очистить поиск <i class="fa-solid fa-eraser"></i></button>
+            <router-link to="/create" v-if="userType == 'customer'">
+                <button class="btn btn-outline-info my-2 my-sm-0 ml-2 btn-add"><i class="fa-solid fa-plus"></i></button>
+            </router-link>
         </form>
         <div class="px-3">
-          <template v-if="!$store.state.isAuthenticated">
+          <template v-if="!userType">
             <router-link to="/auth"><button class="round"><i class="fa-solid fa-user"></i></button></router-link>
           </template>
           <template v-else>
@@ -17,23 +20,52 @@
     </div>
   </nav>
   <div class="container mt-5" v-if="searchQuery != ''">
-    <div class="row">
-      <div class="col-md-4" v-for="tender in tenders" :key="tender.id">
-        <div class="card mb-4">
-          <div class="card-body card-body__search">
-            <h5 class="card-title">{{ tender.title }}</h5>
-            <h6 class="card-subtitle mb-2 text-muted">{{ tender.date }} / {{ tender.end_date }}</h6>
-            <p class="card-text card-text__search">{{ tender.description }}</p>
-            <p class="card-text"><strong>Область:</strong> {{ tender.delivery_area }}</p>
-            <p class="card-text"><strong>Место:</strong> {{ tender.delivery_address }}</p>
-            <p class="card-text"><strong>Начальная цена:</strong> {{ tender.first_price }} ₽</p>
-            <router-link :to="'/tender/' + tender.id" class="btn btn-primary ">Подробнее</router-link>
+    <div class="mycard" v-if="tenders.length > 0">
+      <div class="mycard-head">
+        <div class="mycard-col">
+          <div>
+            Наименование
+          </div>
+        </div>
+        <div class="mycard-col">
+          <div>
+            Место поставки
+          </div>
+        </div>
+        <div class="mycard-col">
+          <div>
+            Цена
+          </div>
+        </div>
+      </div>
+      <div class="mycard-body mycard-tender" v-for="tender in tenders" :key="tender.id" @click="goToTender(tender.id)">
+        <div class="mycard-col">
+          <div class="mycard-col__content">
+            <span class="tender-name">Тендер №{{ tender.id }} от {{ tender.date }} до {{ tender.end_date }}</span>
+            <br>
+            {{ tender.description }}
+          </div>
+        </div>
+        <div class="mycard-col">
+          <div class="mycard-col__content">
+            {{ tender.delivery_area }}, {{ tender.delivery_address }}
+          </div>
+        </div>
+        <div class="mycard-col">
+          <div class="mycard-col__content">
+            {{ tender.first_price }} ₽
           </div>
         </div>
       </div>
     </div>
+    <div class="noresult" v-else><strong v-if="searchQuery.length > 2">Ничего не найдено <i class="fa-solid fa-face-sad-tear"></i></strong></div>
   </div>
   <router-view v-else></router-view>
+  <button @click="scrollToTop" class="btn btn-outline-info btn-scroll-to-top" v-show="showScrollToTopButton">
+  <i class="fa-solid fa-arrow-up"></i>
+</button>
+
+
 </template>
 
 <script>
@@ -43,12 +75,23 @@ export default {
   data() {
     return {
       tenders: [],
-      searchQuery: ''
+      searchQuery: '',
+      userType: null,
+      showScrollToTopButton: false,
     }
   },
   methods: {
+    scrollToTop() {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  },
+    handleScroll() {
+    this.showScrollToTopButton = window.scrollY > 300;
+  },
     async searchTenders() {
-      if (this.searchQuery.length < 1) {
+      if (this.searchQuery.length < 2) {
         this.tenders = [];
         return;
       }
@@ -62,6 +105,7 @@ export default {
       for (let tender of data) {
         let id = tender.id
         let date = new Date(tender.created_data_time).toLocaleDateString()
+        let time = new Date(tender.start_data_time).toLocaleTimeString();
         let description = tender.description
         let end_date = new Date(tender.end_data_time).toLocaleDateString()
         let end_time = new Date(tender.end_data_time).toLocaleTimeString()
@@ -76,6 +120,7 @@ export default {
         this.tenders.push({
           id,
           date,
+          time,
           description,
           end_date,
           end_time,
@@ -85,7 +130,42 @@ export default {
           title
         })
       }
-    }
+      this.tenders.sort((a, b) => b.id - a.id)
+    },
+    goToTender(id) {
+      const path = `/tender/${String(id)}`;
+      this.$router.push(path);
+      this.searchQuery = '';
+    },
+    async getUserType() {
+      try {
+        const response = await axios.get('/user_info'); 
+        this.userType = response.data.user_type; 
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    clearSearch() {
+    this.searchQuery = '';
+  },
+  },
+  mounted() {
+  window.addEventListener('scroll', this.handleScroll);
+},
+beforeDestroy() {
+  window.removeEventListener('scroll', this.handleScroll);
+},
+  created() {
+    this.getUserType();
   }
 }
 </script>
+
+<style>
+.btn-scroll-to-top {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 100;
+}
+</style>

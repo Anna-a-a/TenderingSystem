@@ -1,27 +1,160 @@
-</div>
-<div style="margin-left: 300px; padding: 20px;">
-    <h1>Мои тендеры</h1>
-    
-    <div class="container mt-3">
-    <div class="row">
-        <div class="col-md-12">
-        <div class="card mb-3" >
-            <div class="card-header d-flex justify-content-between">
-            <span>Тендер № [номер] от [дата]</span>
-            <span>Место поставки: [область], [адрес]</span>
-            </div>
-            <div class="card-body">
-              [описание тендера]
-            </div>
-            <div class="card-footer d-flex justify-content-between">
-              <span class="text-muted">Окончание (МСК): [дата] [время] </span>
-              <span>Цена: [цена] ₽</span>
-              <router-link to="/participants" class="btn btn-secondary" role="button">Участники</router-link>
-            </div>
-        </div>
-        </div>
+<template>
+  <SideMenu />
+  <div class="container">
+    <h1 style="text-align: center;">Мои тендеры</h1>
+
+    <div v-if="loading" class="loading-container">
+      <i class="fa-solid fa-spinner fa-spin"></i>
     </div>
+
+    <div v-else>
+      <div class="no-info" v-if="tenders.length == 0">
+      <div v-if="userType=='customer'">
+      Вы еще не создали ни одного тендера
+      </div>
+      <div v-if="userType=='supplier'">
+        Вы еще не участвовали в тендерах
+      </div>
     </div>
-</div>
-</div>
+    <div class="mycard" v-else>
+      <div class="mycard-head">
+        <div class="mycard-col">
+          <div>
+            Наименование
+          </div>
+        </div>
+        <div class="mycard-col">
+          <div>
+            Место поставки
+          </div>
+        </div>
+        <div class="mycard-col">
+          <div>
+            Цена
+          </div>
+        </div>
+      </div>
+      <div class="mycard-body mycard-tender" v-for="tender in tenders" :key="tender.id" @click="goToTender(tender.id)">
+        <div class="mycard-col">
+          <div class="mycard-col__content">
+            <span class="tender-name">Тендер №{{ tender.id }} от {{ tender.date }} до {{ tender.end_date }}</span>
+            <br>
+            {{ tender.description }}
+          </div>
+        </div>
+        <div class="mycard-col">
+          <div class="mycard-col__content">
+            {{ tender.delivery_area }}, {{ tender.delivery_address }}
+          </div>
+        </div>
+        <div class="mycard-col">
+          <div class="mycard-col__content">
+            {{ tender.first_price }} ₽
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  </div>
+  
 </template>
+
+<script>
+import axios from 'axios'
+import SideMenu from './SideMenu.vue';
+
+export default {
+  components: {
+    SideMenu,
+  },
+  data() {
+    return {
+      tenders: [],
+      user_id: 0,
+      userType: null,
+      loading: true,
+    }
+  },
+  created() {
+    this.getUserType();
+    axios.get('/user_info')
+      .then(response => {
+        this.user_id = response.data.user_id;
+        console.log(this.user_id);
+        this.fetchTenders()
+      })
+      .catch(error => {
+        console.log(error.response.data);
+        console.log(error.response.status);
+        console.log(error.response);
+      });
+  },
+  methods: {
+    async getUserType() {
+      try {
+        const response = await axios.get('/user_info');
+        this.userType = response.data.user_type;
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    fetchTenders() {
+      let apiPath = '';
+      if (this.userType === 'customer') {
+        apiPath = `/user_tenders/${this.user_id}`;
+      } else if (this.userType === 'supplier') {
+        apiPath = `/supplier_tenders/${this.user_id}`;
+      }
+      if (apiPath) {
+        axios.get(apiPath)
+          .then(response => {
+            for (let tender of response.data) {
+              console.log(response.data)
+              let id = tender.id
+              let date = new Date(tender.created_date_time).toLocaleDateString()
+              let time = new Date(tender.start_date_time).toLocaleTimeString();
+              let description = tender.description
+              let end_date = new Date(tender.end_date_time).toLocaleDateString()
+              let end_time = new Date(tender.end_date_time).toLocaleTimeString()
+              let delivery_area = tender.delivery_area
+              let delivery_address = tender.delivery_address
+              let first_price = tender.first_price
+              let title = tender.title
+
+              description = description.charAt(0).toUpperCase() + description.slice(1);
+              delivery_address = delivery_address.charAt(0).toUpperCase() + delivery_address.slice(1);
+              delivery_area = delivery_area.charAt(0).toUpperCase() + delivery_area.slice(1);
+
+              this.tenders.push({
+                id,
+                date,
+                time,
+                description,
+                end_date,
+                end_time,
+                delivery_area,
+                delivery_address,
+                first_price,
+                title
+              })
+              // this.loading = false;
+            }
+            this.loading = false;
+            this.tenders.sort((a, b) => b.id - a.id)
+          })
+          .catch(error => {
+            this.loading = false;
+            console.error(error)
+          })
+      }
+    },
+
+    goToTender(id) {
+      const path = `/tender/${String(id)}`;
+      this.$router.push(path);
+    }
+
+  }
+}
+</script>
