@@ -12,29 +12,34 @@ import Tender from './components/tender.vue';
 import Forbidden from './components/forbidden.vue';
 
 const router = createRouter({
-  history: createWebHistory(),
-  routes: [
-    { path: '/', component: MainPage, alias: '/' },
-    { path: '/create', component: CreateTender },
-    { path: '/forbidden', component: Forbidden },
-    { path: '/profile', component: Profile },
-    { path: '/mytenders', component: MyTenders },
-    { path: '/myresponse', component: MyResponse },
-    { path: '/auth', component: Authorization},
-    { path: '/regist', component: Registration},
-    { path: '/tender/:id', component: Tender, props: true },
-  ]
+    history: createWebHistory(),
+    routes: [
+        { path: '/', component: MainPage, alias: '/' },
+        { path: '/create', component: CreateTender },
+        { path: '/forbidden', component: Forbidden },
+        { path: '/profile', component: Profile },
+        { path: '/mytenders', component: MyTenders },
+        { path: '/myresponse', component: MyResponse },
+        { path: '/auth', component: Authorization },
+        { path: '/regist', component: Registration },
+        { path: '/tender/:id', component: Tender, props: true },
+    ]
 });
 
 router.beforeEach(async (to, from, next) => {
-  try {
-    const response = await axios.get('/update_tender_status');
-    // Обработайте ответ сервера, если необходимо
-    next();
-  } catch (error) {
-    // Обработайте ошибку, если она возникла
-    next();
-  }
+    if (to.name === 'main_page' || to.name === 'tender') {
+        try {
+            const response = await axios.get('/update_tender_status');
+            // Обработайте ответ сервера, если необходимо
+            next();
+        } catch (error) {
+            // Обработайте ошибку, если она возникла
+            next();
+        }
+    } else {
+        next();
+    }
 });
 
 export default router;
+
