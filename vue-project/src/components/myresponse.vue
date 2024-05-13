@@ -10,7 +10,7 @@
 
       <div v-else-if="responseData.length > 0">
         <p v-for="(response, index) in responseData" :key="index" class="responseans">
-          Вы победили в тендере "{{ response.title }}". Мы передали заказчику ваши контактные данные, ожидайте ответа на почту, которая указана в личном кабинете.
+          Вы победили в тендере "<a href="javascript:void(0)" @click="goToTender(response.id)">{{ response.title }}</a>". Мы передали заказчику ваши контактные данные, ожидайте ответа на почту, которая указана в личном кабинете.
         </p>
       </div>
 
@@ -56,6 +56,10 @@ export default {
         console.error(error);
       }
     },
+    goToTender(id) {
+      const path = `/tender/${String(id)}`;
+      this.$router.push(path);
+    }
   },
 };
 </script>
